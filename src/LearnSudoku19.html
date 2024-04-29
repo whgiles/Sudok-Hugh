@@ -1,0 +1,3844 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.js"></script> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/latest/jquery.mobile.css" />
+	<link type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.css" rel="stylesheet" /> 
+	<script type="text/javascript" src="http://dev.jtsage.com/jquery.mousewheel.min.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.core.min.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.mode.datebox.min.js"></script> 
+-->
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.dropbtn {
+  background-color: #3498DB;
+  color: white;
+  padding: 2px;
+  font-size: 9px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.Labelb{
+	width: 25px;
+	background-color:#c3d8f4;
+	text-align: center; 
+	color: black;
+	border: 2px solid #c3d8f4;
+	font-size: 9px;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	font-weight: bold;
+	padding: 0px 0px 0px 0px ;
+}
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.buttonbet{
+  background-color: #6d3433;
+  color: white;
+}
+.numbers {
+  background-color: rgb(0,100,0); 
+
+  color: white;
+  padding: 4px 11px 2px;
+  text-align: center; 
+  text-decoration: none;
+
+  font-size: 15px;
+  margin: 5px 4px;
+  cursor: pointer;
+}
+.numberAvail {
+  background-color: rgb(0,100,0); 
+
+  color: white;
+  padding: 4px 11px 2px;
+  text-align: center; 
+  text-decoration: none;
+
+  font-size: 15px;
+  margin: 5px 4px;
+  cursor: pointer;
+}
+.button {
+  background-color: rgb(0,100,0); 
+
+  color: white;
+  padding: 4px 11px 2px;
+  text-align: center; 
+  text-decoration: none;
+
+  font-size: 9px;
+  margin: 5px 4px;
+  cursor: pointer;
+}
+.buttonOn {
+  background-color: #4CAF50;
+  font-weight: bold;
+  
+  color: red;
+  padding: 4px 11px 2px;
+  text-align: center;
+  text-decoration: none;
+
+  font-size: 11px;
+  margin: 5px 4px;
+}
+
+.butNote {
+  background-color: darkgrey;
+  color: white;
+  padding: 0px 4px 0px ;
+  height:15px;
+  width:5px;
+  text-align: center;
+  text-decoration: none;
+  margin: 0px 0px;
+  cursor: pointer;
+}
+div.t {
+  position: relative;
+  white-space: nowrap;
+}
+div.a {
+  position: relative;
+  width: 381px;
+  white-space: nowrap;
+  border: 3px solid red;
+}
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}
+    
+
+    
+</style>
+</head>
+    
+<script language="JavaScript">
+    
+//$(document).ready(function () {
+//document.getElementById('myHint').onblur = function(){  
+window.onblur = function(){  
+    Pause("Off");  
+}  
+//ocument.getElementById('myHint').onfocus = function(){  
+window.onfocus = function(){  
+    Pause("On");  
+}/**/
+    var giShowAvOptions = false;
+	var giZoom = 100;
+    var giShowNotesNum = 0;
+    var alast = new Array([9]);
+    var aCngCnt = new Array([9]); //Array to Hold Cnt for Each new Solve For Undo
+    var aSolved = new Array([9]); //Array to Hold Solved Game
+    //var aNotes = new Array([9]);
+    var giPauseStartTime = "";
+	var gi10IN5 = false;
+    //var giPauseEndTime = "";
+    var giPauseTotTime = 0;
+    var giStartTime = new Date();
+    var giEndTime = new Date();
+    var gSave = new Array([9]);
+    var giCngControlNumber = 0;
+	var giCellCount = 0;
+	var giBoldCount = 0;
+    var giTotCnt = 0;
+    var giCellCnt = 0; // used in Solve Game to see if looping is Stuck
+    var giStartCnt = 0; // Number of Cells used when Game is loading
+    var giLevel = 1;
+	var giQuadBet = "";
+	var giTotBets = 0;
+	var giBetCnt = 0;
+	var giMouseWasDn = false;
+	var giShowOptionsOff = true;
+    //var giDifficulty = 0;
+    var giMistake = 0;
+	var giTotLost = 0;
+    var giMulligan = 0; //at giLevel number of Mulligans for bad key if number already exists in the select Quad
+    var giMulliganAllowed = 2;
+    var giUndoCnt = 0;
+    var PaintStore = "";
+    //var SolveFast = false; // Off only add one new cell at a time when solving
+    var giHintCnt = 0; // Cycle through Hints available
+    var giHintOn = false;
+    var giDblClick = false;
+    var giEmptyCells = true;
+    var giShowNotes = false;
+    //var giNotesOn = false;
+    var giHintsAvailable = 0;
+    var giLoadCnt = 0; // Used for switching Game numbers in the loading process
+    var CurrentBox = "";
+    var CurrentBox2 = "";
+    var giHintCost = 3000;
+    var giCheckErrors = true;
+    var giNewGameCnt = 0;
+    var giGameOver = false;
+    var giManualLoad = false;
+	var RanNum = 0;
+    var gGameStarted = false; // True when first play has been made. Some buttons not usable until game has started
+    var giAmount=0; //document.getElementById('IdAmount').value = alertmsg;
+    //var aPaintStore = new Array([31]);
+    var aPaintStore = new Array([9]);
+    for(r=0; r<9; r++) { 
+        alast[r] = new Array(9);
+        //aNotes[r] = new Array(9);
+        aCngCnt[r] = new Array(9);
+        aPaintStore[r] = new Array(9);
+        aSolved[r] = new Array(9);
+        gSave[r] = new Array(9);
+    }
+
+//});
+
+function buyHints(buyNum) {
+    if (giAmount>buyNum*giHintCost) {
+        giHintsAvailable = giHintsAvailable + buyNum;
+        //giAmount=giAmount-(buyNum*giHintCost);
+        AdjustAmount(-(buyNum*giHintCost));
+        //document.getElementById('myHint').innerText = 'Hint '+giHintsAvailable;
+        //document.getElementById('mySolve').innerText = 'Solve '+giHintsAvailable;
+        document.getElementById('IdHint').value = giHintsAvailable;
+    } else {
+        //var HintCost = formatMoney(buyNum*giHintCost);
+        //var AvailableScore = formatMoney(giAmount);
+        //alert('Score Available: '+formatMoney(giAmount)+' Cost Of Hints: '+ formatMoney(buyNum*giHintCost));
+        ShowMessage('Unable to Buy...Score Available: '+formatMoney(giAmount)+' Cost Of Hints: '+ formatMoney(buyNum*giHintCost),"Y");
+    }
+}
+    
+function UndoRestore(liLoad) {
+    if (!liLoad && (giEmptyCells || giHintOn || giShowNotes || giCngControlNumber<=1 || giGameOver)) {
+        return;
+    }
+    //var runOptions = isNotesOpen(); //document.getElementById('o00').style.visibility == "visible";
+    var hasChanges = false;
+    if (liLoad) {
+        giCngControlNumber++;
+    }
+    giCellCnt=0;
+    for(r=0; r<9; r++) { 
+        for(c=0; c<9; c++) {
+            if (liLoad) {
+                //document.getElementById('n'+r+c).style.font = "italic bold 8px arial,serif";
+                if (document.getElementById('n'+r+c).value == "" || document.getElementById('n'+r+c).style.font != "") {// document.getElementById('n'+r+c).value.substring(0,1) == "*") {
+                    alast[r][c] = "";
+                    aCngCnt[r][c] = 0;
+                } else if (alast[r][c] != document.getElementById('n'+r+c).value) {
+                    alast[r][c] =  document.getElementById('n'+r+c).value;
+                    aCngCnt[r][c] = giCngControlNumber;
+                    hasChanges = true;
+                }
+            } else if (aCngCnt[r][c] == giCngControlNumber) {
+                document.getElementById('n'+r+c).value= '';
+                alast[r][c]='';
+                aCngCnt[r][c] = 0;
+                document.getElementById('n'+r+c).style.backgroundColor = "white";
+                aPaintStore[r][c] = "rgb(255,255,255)";
+                AdjustAmount(-1000);
+                giUndoCnt++;
+                ShowMessage("Undo - deducting 1,000 points...","Y");
+            }
+            if (document.getElementById('n'+r+c).value != "") { //Store initial load
+                //n[document.getElementById('n'+r+c).value-1]++;
+                giCellCnt++;
+            }
+        }
+    }
+    giGameOver=PaintNumbers(false);
+    if  (!liLoad || !hasChanges) {
+        giCngControlNumber--;
+        if (giCellCnt == 1) {
+            gGameStarted = false;
+        } else if (giCellCnt == 0) {
+            giEmptyCells = false;
+        }
+        if (giCellCnt > giStartCnt) {
+            gGameStarted = true;
+			SetupBlur(1);
+        } else {
+            gGameStarted = false;
+			SetupBlur(0);
+        }
+    }
+    if (!liLoad && giLevel < 4) { // && runOptions
+        ////FindOptions(true,false,false);
+		FindOptions(false,true,false);
+    }
+}
+function LoadAll() {
+    var Issues = false;
+    var n = new Array([9]);
+    var xxx = 0;
+    for(rw=0; rw<9; rw++) { 
+        n[rw] = 0;
+    }
+    for(rw=0; rw<9; rw++) {
+        for(cl=0; cl<9; cl++) {
+            if (document.getElementById('n'+rw+cl).value != "") { //Store initial load
+                aSolved[rw][cl] = document.getElementById('n'+rw+cl).value;
+                gSave[rw][cl] = document.getElementById('n'+rw+cl).value;
+                n[aSolved[rw][cl]-1]++;
+            } else {
+                aSolved[rw][cl] = "";
+                gSave[rw][cl] = "";
+            }
+        }
+    }
+    var liDone = false;
+    for (sx2=0;sx2<10;sx2++) {
+        for(rw=0; rw<9; rw++) { 
+            for(cl=0; cl<9; cl++) {
+                if (aSolved[rw][cl] == "") {
+                    lresults=FindValues('a'+rw+cl,false,true,aSolved,false);
+                    if (lresults.length==1) {
+                        aSolved[rw][cl] = lresults;
+                        gSave[rw][cl] = lresults;
+                        n[aSolved[rw][cl]-1]++;
+                        if (n[0]+n[1]+n[2]+n[3]+n[4]+n[5]+n[6]+n[7]+n[8] == 81) {
+                            liDone = true;
+                            break;
+                        }
+                    }              
+                }
+            }
+            if (liDone) {
+                break;
+            }
+        }
+        if (liDone) {
+            break;
+        } else {
+           xxx = n[0]+n[1]+n[2]+n[3]+n[4]+n[5]+n[6]+n[7]+n[8];
+        }
+    }
+    if (!liDone) { // Hard Game - Solve with Function StuckLoop()
+        for(rw=0; rw<9; rw++) { 
+            for(cl=0; cl<9; cl++) {
+                if (aSolved[rw][cl] == "") {
+                    lresults=FindValues('a'+rw+cl,false,true,aSolved,false);
+                    if (lresults.length==1) {
+                        aSolved[rw][cl] = lresults;
+                        gSave[rw][cl] = lresults;
+                        n[aSolved[rw][cl]-1]++;
+                    } else if (lresults.length < 4) { // Get Cell and minimum number of options to rotate through
+                        oCell=rw.toString()+cl.toString();
+                        lreturn = StuckLoop(oCell,lresults,aSolved,gSave,true);
+                        if (lreturn) {
+                            liDone = true;
+                        } else {
+                            for(rg=0; rg<9; rg++) { 
+                                for(cg=0; cg<9; cg++) {
+                                    aSolved[rg][cg] = gSave[rg][cg];
+                                }
+                            }
+                        }  
+                    }              
+                }
+            }
+        }
+    } 
+    if (!liDone) {
+        alert("Game: Unsolvable!!!");
+    }
+}
+
+    
+function CheckError(liAuto) {
+    if (gGameStarted && document.getElementById('MyNotes').innerText == "Notes Off") {
+		giShowOptionsOff = false; // Allowing Options in a secret way. Turn on Notes and Click on Advanced only after Game Started
+        return;
+    }
+    if (giEmptyCells || giHintOn || giShowNotes) {
+        return;
+    } else if (giHintOn){
+        giHintOn = false;
+        giHintCnt = 0;
+        document.removeEventListener("click", ClearPaint);
+        document.removeEventListener("mousemove", ClearPaint);
+        document.getElementById("myHint").removeEventListener("click", ClearPaint);
+        return;
+    }
+    if (true) {
+        var Issues = false;
+        var minCnt = 1000;
+        var lcHolder = "";
+        for(rw=0; rw<9; rw++) { 
+            for(cl=0; cl<9; cl++) { 
+                lcHolder = document.getElementById('n'+rw+cl) //.value; //document.getElementById(CurrentBox).style.font != "" //lcHolder.substring(0,1) != "*"
+                if ((lcHolder.value != "" && lcHolder.style.font == "") && aSolved[rw][cl] != document.getElementById('n'+rw+cl).value) {
+                    document.getElementById('n'+rw+cl).style.backgroundColor = "rgb(250,128,114)";
+                    aPaintStore[rw][cl] = "rgb(250,128,114)";
+                    Issues = true;
+                    minCnt = Math.min(minCnt, aCngCnt[rw][cl]);
+                }
+            }
+        }
+    }
+    if (Issues) {
+        minCnt = giCngControlNumber - minCnt + 1;
+        alert("Errors Found...Press Undo "+minCnt.toString()+" times.");
+    } 
+    if (liAuto) {
+        return Issues;
+    } else if (!Issues)  {
+        //alert("No Issues Found...")
+        ShowMessage("No Issues Found...","B");
+    }
+    return;
+    
+    /*var text1 = '';
+    var text2 = '';
+    for(r=0; r<9; r++) {
+        for(c=0; c<9; c++) {
+            text1=document.getElementById('n'+r+c).value;
+            for (xc=0; xc<9 ; xc++) {
+                 text2=document.getElementById('n'+r+xc).value;
+                 if (xc!=c && text1==text2 && text1!="" && text2!="") {
+                     //$('#fieldID').css('background-color', '#FF6600');
+                     document.getElementById('n'+r+xc).style.backgroundColor = "rgb(250,128,114)";
+                     aPaintStore[r][c] = "rgb(250,128,114)";
+                     Issues = true;
+                 }
+            }
+            for (xr=0; xr<9 ; xr++) {
+                 text2=document.getElementById('n'+xr+c).value;
+                 if (xr!=r && text1==text2 && text1!="" && text2!="") {
+                      //$('#fieldID').css('background-color', '#FF6600');
+                      document.getElementById('n'+xr+c).style.backgroundColor = "rgb(250,128,114)"; //"#ff0000"
+                      aPaintStore[xr][c] = "rgb(250,128,114)";
+                      Issues = true;
+                }
+            }
+
+        }
+    } 
+    for(i=0; i<3; i++) {
+        var cq = (i==0?0:(i==1?3:6)); //Column Quardrent 
+        for(r=0; r<9; r++) {
+            var rq = (r<3?0:(r<6?3:6)); //Row Quardrent
+
+            for (c=cq; c<cq+3 ; c++) {
+                //var t = c+cq-1; //Column of Text1
+                //var t = c; //Column of Text1
+                if (document.getElementById('n'+r+c).style.backgroundColor != "rgb(250,128,114)") {
+                    text1=document.getElementById('n'+r+c).value;
+                    if (text1!="") {
+                        for(rr=rq; rr<rq+3; rr++) {
+                            for (xc=cq; xc<cq+3 ; xc++) {
+                                text2=document.getElementById('n'+rr+xc).value;
+                                if (xc!=c && text1==text2 && text1!="" && text2!="") {
+                                    document.getElementById('n'+rr+xc).style.backgroundColor = "rgb(250,128,114)";
+                                    document.getElementById('n'+r+c).style.backgroundColor = "rgb(250,128,114)";
+                                    aPaintStore[rr][xc] = "rgb(250,128,114)";
+                                    aPaintStore[r][c] = "rgb(250,128,114)";
+                                    Issues = true;
+                               }
+                            }
+                        }  
+                    }
+                }
+            }
+        }
+    }*/
+
+}
+/*
+var openFile = function(event) {
+    var input = event.target;
+    var aLine = new Array(); 
+    var reader = new FileReader();
+    reader.onload = function(){
+        var node = document.getElementById('output');
+        //var text = reader.result;
+        //node.innerText = text;
+
+        //var lines = reader.result.split('\n'); //reader.result.split(";")
+        lines = reader.result.split('\n');
+        loadGame(lines);
+        console.log(reader.result.substring(0, 200));
+    };
+    reader.readAsText(input.files[0]);
+};
+*/
+function dn() {
+    var mySelect = document.getElementById("myDifficulty");
+    var setNode = 0;
+    for (i = 0; i < mySelect.length; i++) {
+        if (mySelect.options[setNode].selected) {
+            setNode = i;
+            break;
+        }
+    }
+}
+function ChangeLevel() {
+    var mySelect = document.getElementById("myDifficulty");
+    //var mySelect = document.getElementById("myLevel");
+    var liLevel = 0;
+    for (i = 0; i < mySelect.length; i++) {
+        if (mySelect.options[i].selected) {
+            liLevel = i+1;
+            break;
+        }
+    }
+    if (gGameStarted) {
+        mySelect.options[giLevel-1].selected = true;
+		if (liLevel=3 && document.getElementById('MyNotes').innerText == "Notes Off") {
+			giShowOptionsOff = false; // Allowing Options in a secret way. Turn on Notes and Click on Advanced only after Game Started
+		}
+        return;
+    }
+    giLevel=liLevel;
+    if (giLevel == 1) {
+        document.getElementById("myHintBuy").style.display = "inline-block"; //"none";
+        document.getElementById("mySolve").style.display = "inline-block";
+        //myHintBuy" onClick="buyHints(1)" style="visibility:visible;>Buy</button>
+    } else {
+        document.getElementById("myHintBuy").style.display = "inline-block";
+        document.getElementById("mySolve").style.display = "none";
+    }
+    if (giLevel >= 3) {
+        document.getElementById("NavButtons").style.display = "none";
+        document.getElementById("HintScoreBlock").style.display = "none";
+        giMulligan = 0;
+    } else {
+        document.getElementById("NavButtons").style.display = "block"; //
+        document.getElementById("HintScoreBlock").style.display = "inline-block";
+        giMulligan = giMulliganAllowed;
+    }
+    if (giLevel == 1) {
+        giHintsAvailable = 15;
+        
+    } else if (giLevel == 2)  {
+        giHintsAvailable = 5;
+    } else {
+        giHintsAvailable = 0;
+    }
+    for (x=1;x<=3;x++) {
+        if (giLevel == 1) {
+            document.getElementById('IdNote'+x).innerText = "Options...";
+        //} else if (giLevel == 2)  {
+        //    document.getElementById('IdNote'+x).innerText = "Notes...";
+        }
+    }
+    document.getElementById('IdHint').value = giHintsAvailable;
+    if (gGameStarted) {
+        //alert("Game is now set to Level "+giLevel+"!");
+        ShowMessage("Game is now set to Level "+giLevel+"!","B");
+    }
+    loadGame(true);
+    //PaintNumbers(false);
+}
+function resetform(liClearBack) {
+	if (document.getElementById('MyPause').innerText == "Continue") {
+		return;
+	}
+	ClearMsg();
+	giManualLoad = true;
+    giGameOver = false;
+	giShowOptionsOff = true;
+    if (!liClearBack) {
+        PaintRevert(2);
+    } else {
+        var n = new Array(9);
+        for(rw=0; rw<9; rw++) { 
+            n[rw] = 0;
+        }
+        giCngControlNumber=0;
+        giCellCnt=0;
+        for(r=0; r<9; r++) {
+            //var s = r.toString();
+            for(c=0; c<9; c++) {
+                //var ss = i.toString();
+                document.getElementById('n'+r+c).value = '';
+                document.getElementById('n'+r+c).style.backgroundColor = "white";    
+                document.getElementById('n'+r+c).style.foregroundColor = "rgb(0,0,0)";
+                document.getElementById('n'+r+c).style.fontcolor = "black";
+                document.getElementById('n'+r+c).style.font = "";
+                document.getElementById('o'+r+c).style.borderColor = "rgb(255,255,255)";
+                document.getElementById('o'+r+c).value = '';
+
+                //aNotes[r][c] = '';
+                document.getElementById('n'+r+c).style.borderColor = "rgb(255,255,255)";
+                //id="o01" style="width: 33px; background-color: white; border-color: rgb(255, 255, 255);">
+                aPaintStore[r][c] = "white";
+                aCngCnt[r][c] = 0;
+                alast[r][c] = '';
+                if (document.getElementById('n'+r+c).value != "") { //Store initial load
+                    n[document.getElementById('n'+r+c).value-1]++;
+                }
+                //SolveFast = false;
+            }
+            rw=r+1
+            document.getElementById("KeyB"+rw).style.borderColor = "white";
+        }
+        //document.getElementById('IdMessage').style.display = 'none';
+        //document.getElementById('myHint').innerText = 'Hint '+giHintsAvailable;
+        //document.getElementById('mySolve').innerText = 'Solve '+giHintsAvailable;
+        //giCngControlNumber = 0;
+        //giCellCnt = 0;		
+
+        document.getElementById('IdHint').value = giHintsAvailable;
+        giAmount=0; //  +
+        document.getElementById('IdAmount').value = 0;
+        document.getElementById('IdAmount').style.visibility = 'hidden';
+		PaintStore = "";
+        giEmptyCells = true;
+        CurrentBox = "";
+        giHintOn = false;
+        giHintCnt = 0;
+        giMistake=0;
+		giTotLost=0;
+        giUndoCnt=0;
+		giTotBets = 0;
+		giBetCnt = 0;
+		giCellCount = 0;
+		giBoldCount = 0;
+        giPauseStartTime = "";
+		gi10IN5 = false;
+		giQuadBet = "";
+        giPauseTotTime = 0;
+		document.getElementById("IdLoadCnt").style.backgroundColor = "white";
+		document.getElementById('IdLoadCnt2').value = 0;
+        document.getElementById('IdTimerCnt').value = 0;
+        document.getElementById('IdTimerCnt').style.width = ((document.getElementById('IdTimerCnt').value.toString().length + 1)*8) + 'px';
+        document.getElementById('IdPauseCnt').value = giPauseTotTime;
+        document.getElementById('MyPause').innerText = "Pause Timer";
+        document.getElementById('IdPauseCnt').style.width = ((giPauseTotTime.toString().length + 1)*8) + 'px';
+        gGameStarted = false;
+		SetupBlur(0);
+        document.removeEventListener("click", ClearPaint);
+        document.removeEventListener("mousemove", ClearPaint);
+        document.getElementById("myHint").removeEventListener("click", ClearPaint); 
+        giGameOver=PaintNumbers(false);
+        //document.getElementById('IdMistake').value = giMistake;
+        HideOptions(false);
+    }
+}
+function loadGame(liParam) {
+    if (giManualLoad) {
+		giStartCnt = 0;
+		for(r=0; r<9; r++) { 
+			for(c=0; c<9; c++) {
+				if (document.getElementById('n'+r+c).value !=0) {
+					giStartCnt++;
+				}
+			}
+		}
+		if (giStartCnt>20) {
+			LoadComplete(giStartCnt);
+			if (CurrentBox != "") {
+				document.getElementById(CurrentBox).style.borderColor = "rgb(255,255,255)";
+				CurrentBox="";
+			}
+			return;
+		}
+	}
+    /*var mySelect = document.getElementById("myDifficulty");
+    var lvlDifficulty = 0;
+    for (i = 0; i < mySelect.length; i++) {
+        if (mySelect.options[i].selected) {
+            lvlDifficulty = i;
+            break;
+        }
+    }*/
+    if (gGameStarted) {
+        //mySelect.options[giDifficulty].selected = true;
+        return;
+    }
+
+
+    //lvlDifficulty=giLevel; //lvlDifficulty;
+	var lvlDifficulty = Math.round((Math.random() * 100) + 1);
+	while (lvlDifficulty < 28 || lvlDifficulty > 38) {
+		lvlDifficulty = Math.round((Math.random() * 100) + 1);
+	}
+    
+    if (liParam) {
+        giLoadCnt = 0;
+        gGameStarted = false;
+        giGameOver = false;
+    }
+    resetform(1); 
+    //if (lines == undefined) {
+    if (true) {
+        var lines = Array(9);
+        /*if (lvlDifficulty==1) {
+            lvlDifficulty=38;
+        } else if (lvlDifficulty==2) {
+            lvlDifficulty=34;
+        } else if (lvlDifficulty==3) {
+            lvlDifficulty=30;
+        } else if (lvlDifficulty==4) {
+            lvlDifficulty=26;
+        //} else if (lvlDifficulty==4) {
+        //    lvlDifficulty=26;
+        }*/
+        RanNum = Math.round((Math.random() * 100) + 1);
+        while (RanNum < 1 || RanNum > 15) {
+            RanNum = Math.round((Math.random() * 100) + 1);
+
+        }
+        //RanNum=RanNum.toString();
+	     //RanNum=RanNum.substring(RanNum.length-1,RanNum.length); 
+        //RanNum=2;
+
+		//document.getElementById('IdMistake').value = RanNum;
+		/*if (RanNum<6) {
+			var liColor1 = 85;
+			var liColor2 = 255 - ((RanNum) * 20);
+			var liColor3 = 85;
+		} else if (RanNum<11) {
+			var liColor1 = 85;
+			var liColor2 = 85;
+			var liColor3 = 255 - ((RanNum-5) * 20);
+		} else {
+			var liColor1 = 255 - ((RanNum-10) * 20);
+			var liColor2 = 85;
+			var liColor3 = 85;
+		}
+		
+        document.getElementById("IdLoadCnt").style.backgroundColor = "rgb("+liColor1+","+liColor2+","+liColor3+")"; //"rgb(0,0,0)"; //
+		*/
+		document.getElementById('IdLoadCnt2').value = RanNum;
+		//rgb(85,255,85) rgb(85,150,85)
+		//rgb(85,85,255) rgb(85,85,150)
+		//rgb(255,85,85) rgb(150,85,85) 
+        if (RanNum==1) { //1
+            lines[0] = "4,,,,5,,,1,";
+            lines[1] = "3,1,,,8,,2,,";
+            lines[2] = ",,,,,7,,,3";
+            lines[3] = "2,8,,,3,1,5,6,";
+            lines[4] = "1,3,,5,,6,,2,8";
+            lines[5] = ",7,5,8,2,,,3,1";
+            lines[6] = "7,,,3,,,,,";
+            lines[7] = ",,1,,4,,,5,2";
+            lines[8] = ",5,,,1,,,,4"; 
+        } else if (RanNum==2) {//3
+            lines[0] = ",,5,2,6,,,,4";
+            lines[1] = "6,7,,,,,8,,2";
+            lines[2] = "8,,2,,,,6,,";
+            lines[3] = ",,,,8,5,,,1";
+            lines[4] = ",8,3,1,,6,5,9,";
+            lines[5] = "5,,,7,2,,,,";
+            lines[6] = ",,8,,,,4,,5";
+            lines[7] = "9,,7,,,,,2,8";
+            lines[8] = "4,,,,1,2,7,,";
+
+        } else if (RanNum==3) {//86
+            lines[0] = ",,5,,,,,8,";
+            lines[1] = ",,4,,7,2,,,1";
+            lines[2] = "1,6,,,5,,,,";
+            lines[3] = ",4,3,,1,,,,";
+            lines[4] = "9,,8,,,,1,,5";
+            lines[5] = ",,,,2,,9,3,";
+            lines[6] = ",,,,3,,,1,6";
+            lines[7] = "2,,,1,8,,7,,";
+            lines[8] = ",5,,,,,2,,";
+        } else if (RanNum==4) {//112
+            lines[0] = ",3,4,7,,,,,";
+            lines[1] = ",7,,,8,,,,5";
+            lines[2] = ",,,1,,3,2,,";
+            lines[3] = "9,,2,8,,,,,7";
+            lines[4] = ",,,,9,,,,";
+            lines[5] = "3,,,,,7,1,,8";
+            lines[6] = ",,3,9,,2,,,";
+            lines[7] = "4,,,,5,,,2,";
+            lines[8] = ",,,,,8,7,5,";
+       } else if (RanNum==5) { //134
+            lines[8] = ",,7,,,,,1,9";
+            lines[7] = ",,,,4,8,3,2,";
+            lines[6] = ",,,7,,1,,,";
+            lines[5] = ",,9,,,5,2,,1";
+            lines[4] = ",,,,,,,,";
+            lines[3] = "6,,3,1,,,4,,";
+            lines[2] = ",,,8,,3,,,";
+            lines[1] = ",1,4,6,2,,,,";
+            lines[0] = "3,8,,,,,6,,";
+       } else if (RanNum==6) {//187
+            lines[0] = ",4,,,,6,,,1";
+            lines[1] = "1,,,,,,,7,9";
+            lines[2] = ",,9,8,,,4,5,";
+            lines[3] = ",,,5,4,8,7,,";
+            lines[4] = ",,,,,,,,";
+            lines[5] = ",,5,2,1,7,,,";
+            lines[6] = ",8,1,,,4,5,,";
+            lines[7] = "5,6,,,,,,,2";
+            lines[8] = "9,,,1,,,,3,";
+       } else if (RanNum==7) {           //88
+            lines[0] = ",5,,,,1,,,";
+            lines[1] = ",2,1,4,,,,,";
+            lines[2] = ",,,,3,2,5,,";
+            lines[3] = "7,3,,,,4,6,9,";
+            lines[4] = "9,,6,,,,4,,8";
+            lines[5] = ",4,2,,,,,1,7";
+            lines[6] = ",,7,2,9,,,,";
+            lines[7] = ",,,,,6,7,3,";
+            lines[8] = ",,,5,,,,4,"; 
+       } else if (RanNum==8) {//https://www.websudoku.com/images/example-steps.html
+            lines[0] = ",,,,,,6,8,";
+            lines[1] = ",,,,7,3,,,9";
+            lines[2] = "3,,9,,,,,4,5";
+            lines[3] = "4,9,,,,,,,";
+            lines[4] = "8,,3,,5,,9,,2";
+            lines[5] = ",,,,,,,3,6";
+            lines[6] = "9,6,,,,,3,,8";
+            lines[7] = "7,,,6,8,,,,";
+            lines[8] = ",2,8,,,,,,";       
+       } else if (RanNum==9) {//#142   11 Sideways https://www.websudoku.com/images/example-steps.html
+            lines[0] = "8,3,,,4,2,,9,";
+            lines[1] = "6,5,,,7,,,,";
+            lines[2] = ",,,8,,,,2,";
+            lines[3] = ",1,,,,,8,,";
+            lines[4] = ",,,2,,7,,,";
+            lines[5] = ",,9,,,,,5,";
+            lines[6] = ",2,,,,4,,,";
+            lines[7] = ",,,,3,,,7,5";
+            lines[8] = ",8,,5,2,,,6,3";
+		   
+            /*lines[0] = ",,3,4,8,,9,7,";
+            lines[1] = ",,,9,,,6,,2";
+            lines[2] = ",,9,,3,,,,8";
+            lines[3] = ",,,,,,,6,";
+            lines[4] = ",7,,,5,,,8,";
+            lines[5] = ",3,,,,,,,";
+            lines[6] = ",6,,,,,3,,";
+            lines[7] = "8,,4,,,3,,,";
+            lines[8] = ",9,5,,2,6,8,,"; */
+       } else if (RanNum==10) {//www.websudoku.com/?level=3 
+            lines[0] = ",,,,4,,,,9";
+            lines[1] = "4,,9,7,,5,,,";
+            lines[2] = ",,,,,,3,1,";
+            lines[3] = "7,,,,6,4,,5,";
+            lines[4] = ",8,,,,,,9,";
+            lines[5] = ",5,,1,8,,,,3";
+            lines[6] = ",4,3,,,,,,";
+            lines[7] = ",,,5,,3,7,,8";
+            lines[8] = "1,,,,2,,,,"; 
+       } else if (RanNum==11) {//11 www.websudoku.com/?level=4 Evil
+            lines[0] = ",,,,,,,,3";
+            lines[1] = "6,7,,5,,,2,,";
+            lines[2] = ",5,,4,6,,,7,";
+            lines[3] = ",6,,2,,,,,";
+            lines[4] = ",3,,,8,,,2,";
+            lines[5] = ",,,,,3,,9,";
+            lines[6] = ",8,,,2,7,,3,";
+            lines[7] = ",,9,,,5,,8,6";
+            lines[8] = "5,,,,,,,,";        
+       } else if (RanNum==12) { //134
+            lines[0] = ",,7,,,,,1,9";
+            lines[1] = ",,,,4,8,3,2,";
+            lines[2] = ",,,7,,1,,,";
+            lines[3] = ",,9,,,5,2,,1";
+            lines[4] = ",,,,,,,,";
+            lines[5] = "6,,3,1,,,4,,";
+            lines[6] = ",,,8,,3,,,";
+            lines[7] = ",1,4,6,2,,,,";
+            lines[8] = "3,8,,,,,6,,";
+       } else if (RanNum==13) {//187
+            lines[0] = "9,,,1,,,,3,";
+            lines[1] = "5,6,,,,,,,2";
+            lines[2] = ",8,1,,,4,5,,";
+            lines[3] = ",,5,2,1,7,,,";
+            lines[4] = ",,,,,,,,";
+            lines[5] = ",,,5,4,8,7,,";
+            lines[6] = ",,9,8,,,4,5,";
+            lines[7] = "1,,,,,,,7,9";
+            lines[8] = ",4,,,,6,,,1";
+       } else if (RanNum==14) {           //198
+            lines[0] = ",7,9,1,,,,,";
+            lines[1] = ",,,,,,3,4,7";
+            lines[2] = "8,,,,,5,9,,";
+            lines[3] = "3,2,,,1,,5,,";
+            lines[4] = ",,8,,,,6,,";
+            lines[5] = ",,1,,8,,,2,3";
+            lines[6] = ",,7,9,,,,,4";
+            lines[7] = "6,9,3,,,,,,";
+            lines[8] = ",,,,,3,7,6,"; 
+      } else if (RanNum==15) {           //137
+            lines[0] = ",,5,1,,,9,,6";
+            lines[1] = ",,,5,,,,3,";
+            lines[2] = ",4,6,,,,1,5,";
+            lines[3] = ",,,,,,,,5";
+            lines[4] = ",2,4,,8,,6,1,";
+            lines[5] = "9,,,,,,,,";
+            lines[6] = ",1,9,,,,8,4,";
+            lines[7] = ",6,,,,3,,,";
+            lines[8] = "4,,2,,,9,3,,"; 
+       }
+           /*
+	0   1	2	3	4	5	6	7	8
+    
+0	1	7	2	5	4	9	6	8	3
+1	6	4	5	8	7	3	2	1	9
+2	3	8	9	2	6	1	7	4	5
+
+3	4	9	6	3	2	7	8	5	1
+4	8	1	3	4	5	6	9	7	2
+5	2	5	7	1	9	8	4	3	6
+
+6	9	6	4	7	1	5	3	2	8
+7	7	3	1	6	8	2	5	9	4
+8	5	2	8	9	3	4	1	6	7
+            lines[0] = "";
+            lines[1] = "";
+            lines[2] = "";
+            lines[3] = "";
+            lines[4] = "";
+            lines[5] = "";
+            lines[6] = "";
+            lines[7] = "";
+            lines[8] = ""; 
+*/
+      
+	}
+
+    giLoadCnt++;
+	giStartCnt = 0;
+    giNewGameCnt++;
+    giNewGameCnt = (giNewGameCnt > 9) ? 1 : giNewGameCnt;
+    var n = "";
+    var xr,xc;
+    var isOdd = (giLoadCnt % 2 === 0) ? false : true;    var ScrambleNums = '183694275';
+	var chgnum = parseInt(ScrambleNums.substring(giNewGameCnt-1,giNewGameCnt),10);
+    for(r=0; r<9; r++) {
+        //var s = r.toString();
+        var Cells = lines[r].split(',');
+        if (r>0){ // KeyB0 is hidden
+            document.getElementById("KeyB"+r).style.borderColor = "white";
+        }
+        for(c=0; c<9; c++) {
+            /*
+				rc - rc
+				08 - 00
+				07 - 10
+				06 - 20
+				05 - 30
+				04 - 40
+				03 - 50
+				02 - 60
+				01 - 70
+				00 - 80
+            */
+            if (true) { //(!isOdd) { Scramble by adding a number 1-9 to each number // && n !=""
+                if (!isOdd) {
+                    xr = (8 - r < 0) ? 8 - r + 8 : 8 - r;
+                    xc = (8 - c < 0) ? 8 - c + 8 : 8 - c;
+                } else {
+                    xr = c;
+                    xc = r;
+                }
+                if (Cells[c] !="") {
+                    n=parseInt(Cells[c],10);
+                    n=(n + chgnum > 9)? n + chgnum - 9 : n + chgnum;
+                    n=n.toString();
+                    giStartCnt++;
+                    document.getElementById('n'+xc+xr).value = n; //Cells[c]; // switch row and col
+                } else {
+                    document.getElementById('n'+xc+xr).value = Cells[c];
+                    //document.getElementById('n'+c+r).value = Cells[c];
+                }
+            } else {
+                if (Cells[c] !="") {
+                    document.getElementById('n'+r+c).value = Cells[c];
+                    giStartCnt = giStartCnt + ((Cells[c] != "") ? 1 : 0);
+                }
+
+            }
+            
+            document.getElementById('n'+r+c).style.backgroundColor = "white";     
+            aPaintStore[r][c] = "rgb(255,255,255)";
+            document.getElementById('o'+r+c).value = "";
+            document.getElementById('o'+r+c).style.borderColor = "rgb(255, 255, 255)";
+            HideOptions(false);
+        }
+    }
+    giMistake=0;
+	document.getElementById('IdMistake').value = giMistake;
+    LoadComplete(lvlDifficulty);
+}
+
+function LoadComplete(ManualLoad) {
+	//ManualLoad=true;
+    giStartTime = new Date();
+	giManualLoad = false;
+	LoadAll();
+	var lcChgMsg = "";
+    var aCnt = new Array([9]); // Get Counts of Numbers to insure each Number has a place in the game when removing them for Difficulty changes
+    for(r=0; r<9; r++) { 
+		aCnt[r] = 0;
+    }
+	for(r=0; r<9; r++) { 
+        for(c=0; c<9; c++) {
+            aCnt[document.getElementById('n'+r+c).value-1]++;
+        }
+    }
+	lvlDifficulty=(ManualLoad==0?giStartCnLoad:ManualLoad);
+    if (lvlDifficulty>giStartCnt) { // Not easy enough...need to fill cells
+	    lcChgMsg = "...Adding Cells "+(lvlDifficulty-giStartCnt).toString(); //To Difficult
+        lvlDifficulty=lvlDifficulty-giStartCnt;
+        for(r=0; r<9; r++) {
+            for(c=0; c<9; c++) {
+                if (document.getElementById('n'+r+c).value == "") {
+                    document.getElementById('n'+r+c).value = aSolved[r][c];
+                    lvlDifficulty--;
+                    if (lvlDifficulty==0) {
+                        break;
+                    }
+                    xr=Math.abs(8-r);
+                    xc=Math.abs(8-c);
+                    if (document.getElementById('n'+xr+xc).value == "") {
+                        document.getElementById('n'+xr+xc).value = aSolved[xr][xc];
+                        lvlDifficulty--;
+                        if (lvlDifficulty==0) {
+                            break;
+                        }
+                    }
+                    c=c+1;
+                    r=r+1;
+                }
+
+            }
+            if (lvlDifficulty==0) {
+                break;
+            }
+        }
+    } else if (lvlDifficulty<giStartCnt) {// too easy ...need to remove cells
+	    lcChgMsg = "...Removing Cells "+(giStartCnt-lvlDifficulty).toString(); //To Easy
+        lvlDifficulty=giStartCnt-lvlDifficulty;
+        for(r=0; r<9; r++) {
+            for(c=0; c<9; c++) {
+                if (document.getElementById('n'+r+c).value != "" && aCnt[document.getElementById('n'+r+c).value-1] > 2) { // Do Not Remove if last Number 1-9 Used
+					aCnt[document.getElementById('n'+r+c).value-1]--;
+					document.getElementById('n'+r+c).value = "";
+                    lvlDifficulty--;
+                    if (lvlDifficulty==0) {
+                        break;
+                    }
+                    xr=Math.abs(8-r);
+                    xc=Math.abs(8-c);
+                    if (document.getElementById('n'+xr+xc).value != "" && aCnt[document.getElementById('n'+xr+xc).value-1] > 1) {
+						aCnt[document.getElementById('n'+xr+xc).value-1]--;
+						document.getElementById('n'+xr+xc).value = "";
+                        lvlDifficulty--;
+                        if (lvlDifficulty==0) {
+                            break;
+                        }
+                    }
+                    c=c+1;
+                    r=r+1;
+                }
+
+            }
+            if (lvlDifficulty==0) {
+                break;
+            }
+        }
+    }
+	
+    if (giLevel == 1) {
+        giHintsAvailable = 15;
+    } else if (giLevel == 2)  {
+        giHintsAvailable = 5;
+    } else {
+        giHintsAvailable = 0;
+    }
+    giHintCnt = 0;
+    giHintOn = false;
+    document.getElementById("IdHint").style.borderColor = "rgb(255, 255, 255)";
+    document.getElementById("IdAmount").style.borderColor = "rgb(255, 255, 255)";
+	document.getElementById('IdMessage').style.visibility = 'hidden'; // hidden visible
+    document.getElementById('IdAmount').style.visibility = 'visible';
+    document.getElementById('IdHint').value = giHintsAvailable;
+    document.getElementById("myHint").removeEventListener("click", ClearPaint); 
+    document.removeEventListener("click", ClearPaint);
+    document.removeEventListener("mousemove", ClearPaint);	
+    giAmount=0; //document.getElementById('IdAmount').value = alertmsg;
+    giMistake=0;
+	giTotLost=0;
+    giUndoCnt=0;
+	giTotBets = 0;
+	giCellCount = 0;
+	giBoldCount = 0;
+	giBetCnt = 0;
+	giQuadBet = "";
+    UndoRestore(true);
+    PaintNumbers(false);
+    gGameStarted = false;
+	SetupBlur(0);
+    giEmptyCells = false;
+    if (giLevel == 1) {
+        FindOptions(false,true,false);
+    }
+    giStartCnt = giCellCnt;
+    document.getElementById('IdLoadCnt').value = giCellCnt;
+    giPauseStartTime = "";
+	gi10IN5 = false;
+    //giPauseEndTime = "";
+    giPauseTotTime = 0;
+    if (giLevel == 4) {
+        giMulligan = 0;
+    } else {
+        giMulligan = giMulliganAllowed;
+    }
+    document.getElementById('IdTimerCnt').value = 0;
+    document.getElementById('IdTimerCnt').style.width = ((document.getElementById('IdTimerCnt').value.toString().length + 1)*8) + 'px';
+    document.getElementById('IdPauseCnt').value = giPauseTotTime;
+    document.getElementById('IdPauseCnt').style.width = ((giPauseTotTime.toString().length + 1)*8) + 'px';
+	if (lcChgMsg.length>0){
+		ShowMessage(lcChgMsg,"Y");
+	}
+}
+
+function ShowNotes(ShowClear) {
+    if (giEmptyCells || giHintOn) {
+        return;
+    }
+
+    if (ShowClear) {
+        giShowNotes = true;
+    } else {
+        giShowNotes = isNotesOpen();
+    }
+    if (giShowNotes) {
+        for(r=0; r<9; r++) { //  
+            for(c=0; c<9; c++) {
+                document.getElementById('o'+r+c).value = "";
+                //aNotes[r][c] = '';
+                document.getElementById('o'+r+c).style.backgroundColor = "white";
+                document.getElementById('o'+r+c).style.borderColor = "rgb(255, 255, 255)";
+                //id="o01" style="width: 33px; background-color: white; border-color: rgb(255, 255, 255);">
+            }
+        }
+    }
+    HideOptions(giShowNotes);
+}
+// Button FindOptions(false,true,false)
+function FindOptions(StayOpen,noAlert,noshow) {
+    if (giEmptyCells || giHintOn) {
+        return;
+    }
+    if (giLevel || noshow || StayOpen || isNotesOpen()) {
+        //var cnt = 0;
+        for(r=0; r<9; r++) { //  
+            for(c=0; c<9; c++) {
+                if (document.getElementById('n'+r+c).value == "" || document.getElementById('n'+r+c).style.font != "") {//document.getElementById('n'+r+c).value.substring(0,1) == "*"
+                    //Test//lresults=FindValues('n'+r+c+'Limited',false,false,[],true);
+                    lresults=FindValues('n'+r+c,false,false,[],true);
+                    if (lresults.length>0){
+                        //totSingles = totSingles + ((lresults.length == 1) ? 1 : 0);
+                        //alert ("Row "+r+"Col "+c+" Value: "+lresults);
+                        document.getElementById('o'+r+c).value = lresults.substring(0,lresults.length);
+                        //aNotes[r][c] = lresults.substring(0,lresults.length);
+                        document.getElementById('o'+r+c).maxlength="5"
+                        document.getElementById('o'+r+c).style.backgroundColor = "#ADD8E6";
+                    }
+                } else {
+                    document.getElementById('o'+r+c).value = "";
+                    //aNotes[r][c] = '';
+                    document.getElementById('o'+r+c).style.backgroundColor = "white";
+                    
+                    //cnt++;
+                }
+                document.getElementById('o'+r+c).style.borderColor = "rgb(255, 255, 255)";
+                    //id="o01" style="width: 33px; background-color: white; border-color: rgb(255, 255, 255);">
+            }
+        }
+        //if (!noshow) {
+        //    HideOptions(true);
+        //}
+    } else {
+        HideOptions(false);
+    }
+    return; 
+}
+
+function ShowAvailable(which) {
+	var f=0;
+	var aT="0";
+   if (which) {
+        var r=CurrentBox.substring(1,2);
+		var c=CurrentBox.substring(2,3);
+		var allText = GetCellNumbers(r,c,false,[]);
+		
+		for (f=1;f<=9;f++) {
+			aT=f.toString();
+		    if (!allText.includes(f.toString())) {
+				document.getElementById("KeyB"+aT).style.borderColor = "blue";
+			} else {
+			    document.getElementById("KeyB"+aT).style.borderColor = "white";
+			}
+		}
+    } else {
+		for (f=1;f<=9;f++) {
+			
+			aT=f.toString();
+		    document.getElementById("KeyB"+aT).style.borderColor = "white";
+		}
+	}
+
+}
+function NoteToggle(which) {
+    if (CurrentBox != "" && (document.getElementById(CurrentBox).style.borderColor == "red" || document.getElementById('n'+CurrentBox.substring(1,3)).style.borderColor == "green")) {
+        document.getElementById(CurrentBox).style.borderColor = "rgb(255,255,255)"; //rgb(255,255,0)
+        document.getElementById('n'+CurrentBox.substring(1,3)).style.borderColor = "rgb(255,255,255)";
+    }
+    if (giEmptyCells || giLevel > 1 || giShowOptionsOff) {
+        return;
+    } else if (which == 0) {
+        //document.getElementById("myDiv").style.borderBottomColor = "red";
+    } else if (document.getElementById("Section"+which).style.display === "block") {
+        document.getElementById("Section"+which).style.display = "none";
+        document.getElementById("IdNote"+which).style.visibility = "hidden";
+        document.getElementById("NoteSec"+which).innerText = '';//'.'
+    } else {
+        document.getElementById("Section"+which).style.display = "block";
+        document.getElementById("IdNote"+which).style.visibility = "visible";
+        document.getElementById("NoteSec"+which).innerText = '-'; 
+        document.getElementById("InsideSection"+which).style.border = "thick solid #00FF00";
+    }
+    var Whiches = "123";
+    Whiches = Whiches.replace(which,"");
+    for (x=1;x<=Whiches.length;x++) {
+        var s = Whiches.substring(x-1,x);
+        document.getElementById("Section"+s).style.display = "none";
+        document.getElementById("NoteSec"+s).innerText = ''; //'.'
+    }
+}
+function HideOptions(togHide) {
+    if (togHide) {
+    } else {
+        document.getElementById("Section1").style.display = "none";
+        document.getElementById("Section2").style.display = "none";
+        document.getElementById("Section3").style.display = "none";
+    }
+}
+
+function Stuck() {
+    var runOptions = isNotesOpen(); //document.getElementById('o00').style.visibility == "visible";
+    var g = new Array([9]);
+    var gSave = new Array([9]);
+
+    for(r=0; r<9; r++) { 
+        g[r] = new Array(9);
+        gSave[r] = new Array(9);
+    }
+    var rr,cc,r,c;
+    var oCell = "";
+    var cOpt = ""; // Options
+    var iOpt = 9; // minimum Number of Options
+    var lresults="";
+    for(r=0; r<9; r++) { 
+        for(c=0; c<9; c++) {
+            g[r][c] = document.getElementById('n'+r+c).value;
+            gSave[r][c] = document.getElementById('n'+r+c).value;
+        }
+    }
+    for(r=0; r<9; r++) { 
+        for(c=0; c<9; c++) {//aSolved[r][c]
+            if (g[r][c] == "") {
+                lresults=FindValues('n'+r+c,false,false,[],false);
+                if (lresults.length==1) {
+                    //alert('You should not be Struck. Select Options to help solve.')
+                    return;
+                } else if (lresults.length < 4) { // Get Cell and minimum number of options to rotate through
+                    oCell=r.toString()+c.toString();
+                    cOpt=lresults;
+                    lreturn = StuckLoop(oCell,cOpt,g,gSave,false);
+                    if (lreturn) {
+                        return true;
+                    } else {
+                        for(rg=0; rg<9; rg++) { 
+                            for(cg=0; cg<9; cg++) {
+                                g[rg][cg] = gSave[rg][cg];
+                            }
+                        }
+                    }  
+                }              
+            }
+        }
+    }
+    return false;
+}
+
+function StuckLoop(oCell,cOpt,g,gSave,liNoUpdate) {
+    var cnt = new Array(cOpt.length);
+    var xxx;
+    var n = new Array(9);
+    for(r=0; r<9; r++) { 
+        n[r] = 0;
+    }
+    for (nn=0;nn<cOpt.length;nn++) {
+        g[oCell.substring(0,1)][oCell.substring(1,2)] = cOpt.substring(nn,nn+1);
+        rr=0;
+        cc=0;
+        xxx=0;
+        for (sx2=0;sx2<10;sx2++) {
+            for(r=0; r<9; r++) { // Check Quadrent
+                for(c=0; c<9; c++) {
+                    if (g[r][c] == "") { //undefined || g[r][c].value == ""undefined || g[r][c].value == 0
+                        lresults=FindValues('n'+r+c,false,true,g,false);
+                        if (lresults.length==1){
+                            g[r][c] = lresults.substring(0,1);
+                            n[g[r][c]-1]++;
+                        }
+                    } else if (g[r][c] != 0) {
+                        n[g[r][c]-1]++;
+                    }
+                }
+            }
+            if (xxx == n[0]+n[1]+n[2]+n[3]+n[4]+n[5]+n[6]+n[7]+n[8]) {
+                //sx2=10;
+            } else {
+                xxx = n[0]+n[1]+n[2]+n[3]+n[4]+n[5]+n[6]+n[7]+n[8];
+            }
+            if (n[0]+n[1]+n[2]+n[3]+n[4]+n[5]+n[6]+n[7]+n[8] >= 81) { // if all number have been used...game solved
+                if (!liNoUpdate){
+                    r=oCell.substring(0,1);
+                    c=oCell.substring(1,2);
+                    document.getElementById('n'+oCell).value = cOpt.substring(nn,nn+1);
+                    document.getElementById('n'+oCell).style.backgroundColor = "rgb(135, 206, 250)"; //Light Blue
+                    aPaintStore[r][c] = "rgb(135, 206, 250)";
+                }
+                return true;
+            } else {
+                for(r=0; r<9; r++) { 
+                    n[r] = 0;
+                }
+            }
+        }
+        cnt[nn]=xxx;
+        for(r=0; r<9; r++) { 
+            for(c=0; c<9; c++) {
+                g[r][c] = gSave[r][c];
+            }
+        }
+    }
+    return false;
+}
+//function FastSolve() {
+//    SolveFast = !SolveFast;
+//}
+function SolveGame() {
+    if (giEmptyCells || giHintOn || giHintsAvailable <=0 || giShowNotes || giGameOver) {
+        return;
+    }
+    giHintsAvailable--;
+    document.getElementById('IdHint').value = giHintsAvailable;
+    //var runOptions = isNotesOpen(); //document.getElementById('o00').style.visibility == "visible";
+    var n = new Array(9);
+    var CntOf1 = 0;
+    ClearMsg();
+    for(r=0; r<9; r++) { 
+        n[r] = 0;
+    }
+    var lresults="";
+    for(rw=0; rw<9; rw++) { // Check Quadrent
+        for(cl=0; cl<9; cl++) {
+            if (document.getElementById('n'+rw+cl).value == "" || document.getElementById('n'+rw+cl).style.font != "") { //document.getElementById('n'+rw+cl).value.substring(0,1) == "*"
+                lresults=FindValues('n'+rw+cl,false,false,[],false);
+                if (lresults.length==1){
+                    document.getElementById('n'+rw+cl).value = lresults.substring(0,1);
+                    document.getElementById('n'+rw+cl).style.backgroundColor = "rgb(0,255,0)"; //"rgb(34,139,34)"; // Green
+                    aPaintStore[rw][cl] = "rgb(0,255,0)";
+                    AdjustAmount(-1000);
+					ShowMessage("Nudge...Cost 1,000. (Shown as Green).","Y");
+					//AdjustAmount(500);
+                    /*if (giLevel > 1) {
+                        //alert("Solves...Only for Level 1...hints help you learn...");
+                        ShowMessage("Solves...Only for Level 1...hints help you learn...");
+                    }*/
+                    CntOf1++;
+                    if (true) {//(!SolveFast) {
+                        break;
+                    }
+                }
+            } 
+        }
+        if (CntOf1 > 0) { //(!SolveFast && CntOf1 > 0) {
+            break;
+        }
+    }
+    for(rw=0; rw<9; rw++) {
+        for(cl=0; cl<9; cl++) {
+            if (document.getElementById('n'+rw+cl).value != "") { //Store initial load
+                n[document.getElementById('n'+rw+cl).value-1]++;
+            }
+        }
+    }
+    UndoRestore(true);
+    var iCC = n[0]+n[1]+n[2]+n[3]+n[4]+n[5]+n[6]+n[7]+n[8];
+
+    if (CntOf1 == 0 && iCC < 81) {
+        for(r=0; r<9; r++) { 
+            for(c=0; c<9; c++) {
+                if (document.getElementById('n'+r+c).value == "") {
+                    lresults=FindValues('n'+r+c,false,false,[],false);
+                    if (lresults.length<=2) {
+                        document.getElementById('n'+r+c).value = aSolved[r][c];
+                        document.getElementById('n'+r+c).style.backgroundColor = "rgb(135, 206, 250)"; //Light Blue
+                        aPaintStore[r][c] = "rgb(135, 206, 250)";
+                        AdjustAmount(-5000);
+						ShowMessage("Nudge...Cost 5000. Most Difficult (Shown as Light Blue).","Y");
+                        iCC++; 
+                        CntOf1++;
+                        UndoRestore(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+    } 
+    giGameOver=PaintNumbers(true);
+    giCellCnt = iCC;
+    if (iCC == 81) {
+        alertmsg="Game Completed! Congratulations";
+    } else if (CntOf1>0) {
+        alertmsg=""; //"Solved "+CntOf1+" New Block"+(CntOf1>1?"s.":".");
+    } else {
+        alertmsg="There is an Error...Please press Undo to start again";
+        //document.getElementById('IdMessage').style.borderColor = "red";
+    }
+    if (giLevel == 1) {
+        FindOptions(false,true,false);
+    }
+    if (alertmsg != "" && (giLevel < 4 || iCC == 81)) {// && kSolveOne.checked == true) {
+        ShowMessage(alertmsg,"Y");
+    }
+    if (!giGameOver && giCellCnt > giStartCnt) {
+        gGameStarted = true;
+		SetupBlur(1);
+    }
+	if (giGameOver) {
+        gGameStarted = false;
+	}
+}
+function SetupBlur(onoff) {
+	return;
+	/*if (onoff) {
+		window.addEventListener('blur', function() {
+		   Pause("Off");  
+		});
+		window.addEventListener('onfocus', function() {
+		   Pause("On");   
+		});
+	} else {
+		window.removeEventListener('blur',Pause("Off"));  
+		window.removeEventListener('onfocus',Pause("Off"));
+	}*/
+}
+function ClearMsg() {
+    document.getElementById('IdMessage').value = "";
+	document.getElementById('IdMessage').style.visibility = 'hidden'; // hidden visible
+    //document.getElementById('IdMessage').style.display = 'none'; //'hidden'; display:inline-block"> display:none
+    document.getElementById('IdMessage').style.borderColor = "rgb(255,255,255)";
+	document.getElementById('IdFinalMessage').style.display = 'none'; //'hidden';
+    //document.removeEventListener("mousemove", ClearMsg);
+}
+function GetColValues(c,liStuck,aStuck) {
+    var Text="";
+    for(rr=0; rr<9; rr++) { // Check Column Numbers
+		lcVal = Get_lcVal(rr,c,liStuck,aStuck);
+				//lcVal = document.getElementById('n'+rr+c).value;
+        if (lcVal != 0 && !Text.includes(lcVal)) {
+            Text+=lcVal+",";
+        }
+    }    
+    return Text;
+}
+function GetRowValues(r,liStuck,aStuck) {
+    var Text="";
+    for(cc=0; cc<9; cc++) { // Get Row Numbers
+		lcVal = Get_lcVal(r,cc,liStuck,aStuck);
+				//lcVal = document.getElementById('n'+r+cc).value;
+        if (lcVal != 0 && !Text.includes(lcVal)) {
+            Text+=lcVal+",";
+        }
+    }
+    return Text;
+}
+function GetQuadValues(qr,qc,liStuck,aStuck) {
+    var Text="";
+    for(rr=qr; rr<qr+3; rr++) { // Check Quadrent
+        for(cc=qc; cc<qc+3; cc++) {
+			lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+				//lcVal = document.getElementById('n'+rr+cc).value; 
+            if (lcVal != 0 && !Text.includes(lcVal)) {
+                Text+=lcVal+",";
+            }
+        }
+    }
+    return Text;
+}
+function GetCellNumbers(r,c,liStuck,aStuck) {
+	var cText=GetColValues(c,liStuck,aStuck);
+    var rText=GetRowValues(r,liStuck,aStuck);
+	var qr=(r<3?0:(r<6?3:6));
+    var qc=(c<3?0:(c<6?3:6));
+    var qText=GetQuadValues(qr,qc,liStuck,aStuck);
+    var allText=cText+rText+qText;
+
+	return allText;
+}
+function Get_lcVal(zR,zC,ziStuck,zaStuck) {
+	var zVal = "";
+	if (ziStuck) {
+		zVal = zaStuck[zR][zC];
+	} else {
+		if (document.getElementById('n'+zR+zC).style.font == "") {
+			zVal = document.getElementById('n'+zR+zC).value; 
+		} else {
+			zVal = "";
+		} 
+	}
+	return zVal;
+}
+    //ondblclick="FindValues(id,true,false,[],false)"
+    //ondblclick  - FindValues(id,     true,false,[],false)
+    //Solvegame   - FindValues('n'+r+c,false,false,[],false);
+
+    //Stuck       - FindValues('n'+r+c,false,false,[],false);
+    //FindOptions - FindValues('n'+r+c,false,false,[],true);
+    //StuckLoop   - FindValues('n'+r+c,false,true,g,false);
+    // Hint()     - FindValues(CurrentBox,true,false,[],false);
+function FindValues(lcName,lbDblClick,liStuck,aStuck,liLimited) {
+    var rr,cc,r,c;
+    var r=lcName.substring(1,2);
+    var c=lcName.substring(2,3);   
+
+	if (lbDblClick && document.getElementById(lcName).style.font != "") {
+		document.getElementById(lcName).style.font = "";
+		document.getElementById(lcName).value = "";
+		document.getElementById(lcName).style.backgroundColor = "rgb(255,255,255)"; 
+		aPaintStore[lcName.substring(1,2)][lcName.substring(2,3)] = "rgb(255,255,255)";
+		return;
+	} else if (lbDblClick && giManualLoad) {
+		document.getElementById(lcName).value = "";
+		document.getElementById(lcName).style.backgroundColor = "rgb(255,255,255)";
+		aPaintStore[lcName.substring(1,2)][lcName.substring(2,3)] = "rgb(255,255,255)";
+		return;
+	} 
+	var qr=(r<3?0:(r<6?3:6));
+    var qc=(c<3?0:(c<6?3:6));
+    if (lbDblClick) {
+        if (giLevel <= 3) {
+            var qText=GetQuadValues(qr,qc,false,false);
+            if (qText.length == 16) { // If level 1-3 and one number in quad is left, a dblclick will fill it in.
+                for(rr=1; rr<10; rr++) {
+                    if (!qText.includes(rr.toString())) {
+                        document.getElementById(lcName).style.backgroundColor = "rgb(255,255,255)";
+						KeyB(rr);
+						return;
+                        /*if (!giGameOver){
+							AdjustAmount(5000);
+                            ShowMessage('Dbl-Click Last Cell in Quad Auto adds 5,000 points...',"B");
+                        }*/
+                        
+                    }
+                }
+            }
+			var qText=GetColValues(c,false,false);
+			if (qText.length == 16) { // If level 1-3 and one number in Col is left, a dblclick will fill it in.
+                for(rr=1; rr<10; rr++) {
+                    if (!qText.includes(rr.toString())) {
+                        document.getElementById(lcName).style.backgroundColor = "rgb(255,255,255)";
+						KeyB(rr);
+                        return;
+                    }
+                }
+            }
+			var qText=GetRowValues(r,false,false);
+			if (qText.length == 16) { // If level 1-3 and one number in Row is left, a dblclick will fill it in.
+                for(rr=1; rr<10; rr++) {
+                    if (!qText.includes(rr.toString())) {
+                        document.getElementById(lcName).style.backgroundColor = "rgb(255,255,255)";
+						KeyB(rr);
+                        return;
+                    }
+                }
+            }
+        }
+        if (giLevel == 4 || giShowNotes) {
+            return;
+        } else if (giHintsAvailable <=0) {
+            alert("Sorry...No Hints Available. You can buy a Hint for "+formatMoney(giHintCost)+".")
+            return;
+        } else {
+            giHintsAvailable--;
+            document.getElementById('IdHint').value = giHintsAvailable;
+        }
+    }
+
+    var alertmsg = "";
+    if (liStuck) {
+        lcVal = aStuck[r][c];
+    } else {
+		if (document.getElementById(lcName).style.font == "") {
+			lcVal = document.getElementById(lcName).value; 
+		} else {
+			lcVal = "";
+		} //lcVal = document.getElementById(lcName).value;
+    }
+    if (lcVal !=0) { //""
+        if (false) { //lbDblClick){
+            if (document.getElementById('n'+r+c).style.backgroundColor == "rgb(135, 206, 250)") {
+                alert ("Row "+r+" Col "+c+" has Value: "+document.getElementById(lcName).value + '...Results via Advanced Algorithm');
+            } else {
+                alert ("Row "+r+" Col "+c+" has Value: "+document.getElementById(lcName).value );
+            }
+        }
+        return;
+    }
+	
+	/*if (liLimited) {//Test// if Limited only look at the numbers in the Cell's Row and Column otherwise include Quad
+		var qr=(r<3?0:(r<6?3:6));
+    	var qc=(c<3?0:(c<6?3:6));
+    	var allText=GetQuadValues(qr,qc,liStuck,aStuck);
+		//var allText=GetColValues(c,liStuck,aStuck);
+    	//allText+=GetRowValues(r,liStuck,aStuck);
+	} else {
+    	var allText=GetCellNumbers(r,c,liStuck,aStuck);
+	}*/
+	var allText=GetCellNumbers(r,c,liStuck,aStuck);
+	var aText='';
+	for(rr=1; rr<10; rr++) {
+        if (!allText.includes(rr.toString())) {
+            aText+=rr.toString(); //+","
+        }
+    }
+	//Test//if (showLimited) {
+	if (liLimited) {
+		var AllNumButOne = false;
+	} else {
+		var AllNumButOne = (aText.length == 1 ? true : false);
+	}
+    
+    //aText = aText.replace(/,/g,"");
+    //r1 - First Row in Quad not in Cell    
+    //r2 - Second Row in Quad not in Cell    
+    //c1 - First Column in Quad not in Cell    
+    //c2 - Second Column in Quad not in Cell
+    
+    
+    if (r==qr) {
+        var r1=parseInt(r,10)+1;
+        var r2=parseInt(r,10)+2;
+     } else if (parseInt(r,10)==qr+1) {
+        var r1=parseInt(qr,10);
+        var r2=parseInt(qr,10)+2;
+    } else {
+        var r1=parseInt(qr,10);
+        var r2=parseInt(qr,10)+1;
+    }
+    var xr=r1.toString() + r2.toString();
+    if (c==qc) {
+        var c1=parseInt(c,10)+1;
+        var c2=parseInt(c,10)+2;
+     } else if (parseInt(c,10)==qc+1) {
+        var c1=parseInt(qc,10);
+        var c2=parseInt(qc,10)+2;
+    } else {
+        var c1=parseInt(qc,10);
+        var c2=parseInt(qc,10)+1;
+    }
+    var xc=c1.toString() + c2.toString();
+    var r1Nums=GetRowValues(r1,liStuck,aStuck);  //Get all Numbers for Rows either side of Cell
+    var r2Nums=GetRowValues(r2,liStuck,aStuck);
+    var c1Nums=GetColValues(c1,liStuck,aStuck);  //Get all Numbers for Columns either side of Cell
+    var c2Nums=GetColValues(c2,liStuck,aStuck); //(c<4?1:(c<7?4:7))
+    //Check if other 2 Quardrents have full columns/rows other than current column/row 
+    if (qr == 0 && qc == 0) {
+        var qr2 = "30"; //41";
+        var qr3 = "60"; //71";
+        var qc2 = "03"; //14";
+        var qc3 = "06"; //17";
+    } else if (qr == 3 && qc == 0) {
+        var qr2 = "00"; //11";
+        var qr3 = "60"; //71";    
+        var qc2 = "33"; //44";
+        var qc3 = "36"; //47";
+    } else if (qr == 6 && qc == 0) {
+        var qr2 = "00"; //11";
+        var qr3 = "30"; //41";         
+        var qc2 = "63"; //74";
+        var qc3 = "66"; //77";
+    } else if (qr == 0 && qc == 3) {
+        var qr2 = "33"; //44";
+        var qr3 = "63"; //74";
+        var qc2 = "00"; //11";
+        var qc3 = "06"; //17";
+    } else if (qr == 3 && qc == 3) {
+        var qr2 = "03"; //14";
+        var qr3 = "63"; //74";
+        var qc2 = "30"; //41";
+        var qc3 = "36"; //47";       
+    } else if (qr == 6 && qc == 3) {
+        var qr2 = "03"; //14";
+        var qr3 = "33"; //44";
+        var qc2 = "60"; //71";
+        var qc3 = "66"; //77";       
+    } else if (qr == 0 && qc == 6) {
+        var qr2 = "36"; //47";
+        var qr3 = "66"; //77";
+        var qc2 = "00"; //11";
+        var qc3 = "03"; //14";
+    } else if (qr == 3 && qc == 6) {
+        var qr2 = "06"; //17";
+        var qr3 = "66"; //77";
+        var qc2 = "30"; //41";
+        var qc3 = "33"; //44";
+    } else if (qr == 6 && qc == 6) {
+        var qr2 = "06"; //17";
+        var qr3 = "36"; //47";
+        var qc2 = "60"; //71";
+        var qc3 = "63"; //74";
+    }
+    var xr1=parseInt(qr2.substring(0,1),10);
+    var xc1=parseInt(qr2.substring(1,2),10);
+    var xr2=parseInt(qr3.substring(0,1),10);
+    var xc2=parseInt(qr3.substring(1,2),10);
+    if (aText.length > 1) {
+    var aT = aText;
+    for (x=1;x<=aT.length;x++) {
+        var s = aT.substring(x-1,x);
+        var f=0;
+        var lcVal;
+        for (cc=xc1;cc<xc1+3;cc++) {
+            for (rr=xr1;rr<xr1+3;rr++) {
+                var srr = 'n'+rr.toString()+cc.toString();
+				lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+				//lcVal = document.getElementById('n'+rr+cc).value;
+                if (c!=cc && lcVal !="" && lcVal != s) {
+                    f++;
+                } 
+            }
+        }
+        if (f==6) {
+            aText = aT.replace(s,"");
+        } else {
+            var f=0;
+            for (cc=xc2;cc<xc2+3;cc++) {
+                for (rr=xr2;rr<xr2+3;rr++) {
+                    var srr = 'n'+rr.toString()+cc.toString();
+					lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+					//lcVal = document.getElementById('n'+rr+cc).value;
+
+                    //if (c!=cc && document.getElementById('n'+rr+cc).value!="" && document.getElementById('n'+rr+cc).value != s) {
+                    if (c!=cc && lcVal !="" && lcVal != s) {
+                        f++;
+                    } 
+                }
+            }
+            if (f==6) {
+                aText = aText.replace(s,"");
+            }
+        }
+    }
+    }
+    //Check By Column Step 16 
+    if (aText.length > 1) {// && !liLimited
+        var aT = aText;
+        var lcStep16 = "";
+        for (x=1;x<=aT.length;x++) {
+            var s = aT.substring(x-1,x);
+            //rowFull = false;
+            //xr1=qr2.substring(x-1,x);
+            //xc1=qr2.substring(x,x+1);
+            var q1hasNum=false;
+            var q1RC;
+            var q1c1cnt=0;
+            var q1c2cnt=0;
+            var q1c0cnt=0;
+            for (cc=xc1;cc<xc1+3;cc++) {
+                for (rr=xr1;rr<xr1+3;rr++) {
+					lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+					// lcVal = document.getElementById('n'+rr+cc).value;
+                    var srr = 'n'+rr.toString()+cc.toString();
+                    if (lcVal == s) {
+                        q1hasNum=true;
+                        q1RC=srr;
+                    }
+                    if (c==cc && lcVal!="") { // c is Column of check; cc is column being evaluated; Count if same column and !Empty
+                        q1c0cnt++;
+                    } else if (cc == c1 && lcVal!="") { // c1 is Column not checked; Count if same column and !Empty
+                        q1c1cnt++;
+                    } else if (cc == c2 && lcVal!="") {
+                        q1c2cnt++;
+                    }
+                }
+            }
+            var q2hasNum=false;
+            var q2RC;
+            var q2c1cnt=0;
+            var q2c2cnt=0;
+            var q2c0cnt=0;
+            for (cc=xc2;cc<xc2+3;cc++) {
+                for (rr=xr2;rr<xr2+3;rr++) {
+					lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+					// lcVal = document.getElementById('n'+rr+cc).value;
+                    var srr = 'n'+rr.toString()+cc.toString();
+                    if (lcVal == s) {
+                        q2hasNum=true;
+                        q2RC=srr;
+                    }
+
+                    if (c==cc && lcVal!="") {
+                        q2c0cnt++;
+                    } else if (cc == c1 && lcVal!="") {
+                        q2c1cnt++;
+                    } else if (cc == c2 && lcVal!="") {
+                        q2c2cnt++;
+                    }
+                }
+            }
+            if (q1hasNum + q2hasNum == 1) {
+                if (q1hasNum) {
+                    if (q1RC.substring(2,3)==c1 && q2c0cnt<3 && q2c2cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    } else if (q1RC.substring(2,3)==c2 && q2c0cnt<3 && q2c1cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    } else if (q2c0cnt == 3) { // Condition where column 1 Quad 1 has number and Same Column Quad 2 is full then it can only be in current block
+                        lcStep16 = s; //***
+                    }
+                } else {
+                    if (q2RC.substring(2,3)==c1 && q1c0cnt<3 && q1c2cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    } else  if (q2RC.substring(2,3)==c2 && q1c0cnt<3 && q1c1cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    } else if (q1c0cnt == 3) { // Condition where column 1 Quad 1 has number and Same Column Quad 2 is full then it can only be in current block
+                        lcStep16 = s; //***
+                    }
+                }
+            }
+        }    
+    }
+    if (aText.length > 1 && !liLimited) {
+        var xr1=parseInt(qc2.substring(0,1),10);
+        var xc1=parseInt(qc2.substring(1,2),10);
+        var xr2=parseInt(qc3.substring(0,1),10);
+        var xc2=parseInt(qc3.substring(1,2),10);
+        var aT = aText;
+        for (x=1;x<=aT.length;x++) {
+            var s = aT.substring(x-1,x);
+            var f=0;
+            for (rr=xr1;rr<xr1+3;rr++) {
+                for (cc=xc1;cc<xc1+3;cc++) {
+					lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+					// lcVal = document.getElementById('n'+rr+cc).value;
+
+
+                    if (r!=rr && lcVal!="" && lcVal != s) {
+                        f++;
+                    }
+                }
+            }
+            if (f==6) {
+                aText = aText.replace(s,"");
+            } else {
+                var f=0;
+                for (rr=xr2;rr<xr2+3;rr++) {
+                    for (cc=xc2;cc<xc2+3;cc++) {
+						lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+                    	// lcVal = document.getElementById('n'+rr+cc).value;
+
+                        if (r!=rr && lcVal!="" && lcVal != s) {
+                            f++;
+                        }
+                    }
+                }
+                if (f==6) {
+                    aText = aText.replace(s,"");
+                }
+            }
+        }
+    }
+    if (aText.length > 1 && !liLimited) {// && (lbDblClick || liStuck)
+        //Check By ROW Step 16 
+        var aT = aText;
+        for (x=1;x<=aT.length;x++) {
+            var s = aT.substring(x-1,x);
+            var q1hasNum=false;
+            var q1RC;
+            var q1r1cnt=0;
+            var q1r2cnt=0;
+            var q1r0cnt=0;
+            for (cc=xc1;cc<xc1+3;cc++) {
+                for (rr=xr1;rr<xr1+3;rr++) {
+					lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+rr+cc).value;
+                    var srr = 'n'+rr.toString()+cc.toString();
+                    if (lcVal == s) {
+                        q1hasNum=true;
+                        q1RC=srr;
+                    }
+                    if (r==rr && lcVal!="") {
+                        q1r0cnt++;
+                    } else if (rr == r1 && lcVal!="") {
+                        q1r1cnt++;
+                    } else if (rr == r2 && lcVal!="") {
+                        q1r2cnt++;
+                    }
+                }
+            }
+            var q2hasNum=false;
+            var q2RC;
+            var q2r1cnt=0;
+            var q2r2cnt=0;
+            var q2r0cnt=0;
+            for (cc=xc2;cc<xc2+3;cc++) {
+                for (rr=xr2;rr<xr2+3;rr++) {
+					lcVal = Get_lcVal(rr,cc,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+rr+cc).value;
+
+                    var srr = 'n'+rr.toString()+cc.toString();
+                    if (lcVal == s) {
+                        q2hasNum=true;
+                        q2RC=srr;
+                    }
+                    if (r==rr && lcVal!="") {
+                        q2r0cnt++;
+                    } else if (rr == r1 && lcVal!="") {
+                        q2r1cnt++;
+                    } else if (rr == r2 &&lcVal!="") {
+                        q2r2cnt++;
+                    }
+                }
+            }
+            if (q1hasNum + q2hasNum == 1) {
+                if (q1hasNum) {
+                    if (q1RC.substring(1,2)==r1 && q2r0cnt<3 && q2r2cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    } else  if (q1RC.substring(1,2)==r2 && q2r0cnt<3 && q2r1cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    } 
+                } else {
+                    if (q2RC.substring(1,2)==r1 && q1r0cnt<3 && q1r2cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    } else  if (q2RC.substring(1,2)==r2 && q1r0cnt<3 && q1r1cnt==3) {
+                        aText = aText.replace(s,"");                   
+                    }
+                }
+            } else if (q1hasNum + q2hasNum == 2 && lcStep16 == s && aText.length == 2) {
+                if (q1hasNum && q2c0cnt == 3) {
+                    aText = s; //***
+                    break;
+                } else if (q2hasNum && q1c0cnt == 3 && aText.length == 2) { // Condition where column 1 Quad 1 has number and Same Column Quad 2 is full then it can only be in current block
+                    aText = s; //***
+                    break;
+                }
+            }
+        }    
+    }
+    var FullyLoaded = ""; // If Filled, then a fully load Quad ColuFmn or Row aided in a Single Option
+    if (aText.length > 1) {//  && (lbDblClick || liStuck)
+    //if (true) {
+        var qC1Loaded = false;
+        var qC2Loaded = false;
+        var qR1Loaded = false;
+        var qR2Loaded = false;
+        var qRow1FullyLoaded = false;
+        var qRow2FullyLoaded = false;
+        var qCol1FullyLoaded = false;
+        var qCol2FullyLoaded = false;
+        var fcnt=0; 
+        //Each Clicked cell (Quad 0) has 2 Quads for rows and 2 Quads for Cols. Each not clicked Row Quad has 2 Cols 
+        var QC1TopCol1_WithMatch = false; //- Quad 1R - First Row First Col in Not Clicked
+        var QC1Bott2Col1_WithMatch = false; //- Quad 2R - Second Row First Col in Not Clicked
+        var QC2TopCol2_WithMatch = false; //- Quad 1R - First Row Second Col in Not Clicked
+        var QC2BottCol2_WithMatch = false; //- Quad 2R - Second Row Second Col in Not Clicked
+
+        var QR1Row1Left_WithMatch = false; // Quad 1C - First Row First Col in Not Clicked
+        var QR1Row1Right_WithMatch = false; //- Quad 2C - Second Row First Col in Not Clicked
+        var QR2Row2Left_WithMatch = false; //- Quad 1C - First Row Second Col in Not Clicked
+        var QR2Row2Right_WithMatch = false; //- Quad 2C - Second Row Second Col in Not Clicked
+        for (x=1;x<=aText.length;x++) {
+            //var aT=aText.substring(x-1,x); 
+            var xr1Nums=r1Nums;  
+            var xc1Nums=c1Nums;
+            var xr2Nums=r2Nums;
+            var xc2Nums=c2Nums;
+            qC1Loaded = xc1Nums.includes(aText.substring(x-1,x));
+            qC2Loaded = xc2Nums.includes(aText.substring(x-1,x));
+            qR1Loaded = xr1Nums.includes(aText.substring(x-1,x));
+            qR2Loaded = xr2Nums.includes(aText.substring(x-1,x));
+            qRow1FullyLoaded = false;
+            qRow2FullyLoaded = false;
+            qCol1FullyLoaded = false;
+            qCol2FullyLoaded = false;
+            
+            QC1TopCol1_WithMatch =   false; //- Quad QC1 - Top 3 Blocks First Col in Non-Clicked Quad
+            QC1Bott2Col1_WithMatch = false; //- Quad QC1 - Bottom 3 Blocks First Col in Non-Clicked Quad
+            QC2TopCol2_WithMatch =   false; //- Quad QC2 - Top 3 Blocks Second Col in Non-Clicked Quad
+            QC2BottCol2_WithMatch =  false; //- Quad QC2 - Bottom 3 Blocks Second Col in Non-Clicked Quad
+            QR1Row1Left_WithMatch =  false; //- Quad QR1 - Left 3 Blocks First Row in Non-Clicked Quad
+            QR1Row1Right_WithMatch = false; //- Quad QR1 - Right 3 Blocks First Row in Non-Clicked Quad
+            QR2Row2Left_WithMatch =  false; //- Quad QR2 - Left 3 Blocks First Row in Non-Clicked Quad
+            QR2Row2Right_WithMatch = false; //- Quad QR2 - Right 3 Blocks First Row in Non-Clicked Quad
+
+            //Check Two Quadrents of Same Column as Cell being checked to see if they are full and cant hold another number
+            var qRow1 = parseInt(qr2.substring(0,1),10); //var qr2 = "00";
+            var qRow2 = parseInt(qr3.substring(0,1),10); //var qr3 = "30";  
+            var qCol1 = parseInt(qc2.substring(1,2),10); //var qc2 = "63";
+            var qCol2 = parseInt(qc3.substring(1,2),10); //var qc3 = "66"; 
+            //c1 - 0
+            //c2 - 2
+            //r1 - 7
+            //r2 - 8
+            /*  Quad 0 is Clicked Quad 
+                Quad 1 is first not clicked Quad       
+                Quad 2 is Second not clicked Quad
+            Next 4 If Statements - Check Quad 1 and 2 for both Row(R1 and R2) and Col(C1 and C2) to find when Match exists 
+            */
+            if (qC1Loaded) {
+                for (xx=qRow1;xx<qRow1+3;xx++) {
+					lcVal = Get_lcVal(xx,c1,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+xx+c1).value;
+
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QC1TopCol1_WithMatch = true; 
+                        break;
+                    }  
+                }
+                /*QC1Bott2Col1_WithMatch=!QC1TopCol1_WithMatch;*/
+                for (xx=qRow2;xx<qRow2+3;xx++) {
+					lcVal = Get_lcVal(xx,c1,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+xx+c1).value;
+
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QC1Bott2Col1_WithMatch = true; 
+                        break;
+                    }   
+                }
+            }
+            if (qC2Loaded) {
+                for (xx=qRow1;xx<qRow1+3;xx++) {
+					lcVal = Get_lcVal(xx,c2,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+xx+c2).value;
+
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QC2TopCol2_WithMatch = true; 
+                        break;
+                    }  
+                }
+                /*QC2BottCol2_WithMatch=!QC2TopCol2_WithMatch;*/
+                for (xx=qRow2;xx<qRow2+3;xx++) {
+					lcVal = Get_lcVal(xx,c2,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+xx+c2).value;
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QC2BottCol2_WithMatch = true; 
+                        break;
+                    }   
+                }
+            }
+            if (qR1Loaded) {
+                for (xx=qCol1;xx<qCol1+3;xx++) {
+					lcVal = Get_lcVal(r1,xx,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+r1+xx).value;
+
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QR1Row1Left_WithMatch = true; 
+                        break;
+                    }  
+                }
+                /*QR1Row1Right_WithMatch=!QR1Row1Left_WithMatch;*/
+                for (xx=qCol2;xx<qCol2+3;xx++) {
+					lcVal = Get_lcVal(r1,xx,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+r1+xx).value;
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QR1Row1Right_WithMatch = true; 
+                        break;
+                    }   
+                }
+            }
+            if (qR2Loaded) {
+                for (xx=qCol1;xx<qCol1+3;xx++) {
+					lcVal = Get_lcVal(r2,xx,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+r2+xx).value;
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QR2Row2Left_WithMatch = true; 
+                        break;
+                    }  
+                }
+                /*QR2Row2Right_WithMatch=!QR2Row2Left_WithMatch;*/
+                for (xx=qCol2;xx<qCol2+3;xx++) {
+					lcVal = Get_lcVal(r2,xx,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+r2+xx).value;
+
+                    if (lcVal==aText.substring(x-1,x)) {
+                        QR2Row2Right_WithMatch = true; 
+                        break;
+                    }   
+                }
+            }            
+            fcnt=0;            
+            for (xx=qCol1;xx<qCol1+3;xx++) {
+				lcVal = Get_lcVal(r,xx,liStuck,aStuck);
+                if (lcVal!="" && lcVal!=aText.substring(x-1,x)) {
+                    fcnt++; 
+                } else {
+                    break;
+                }
+            }
+            if (fcnt==3) {
+               qRow1FullyLoaded = true;
+            }    
+            fcnt=0;
+            for (xx=qCol2;xx<qCol2+3;xx++) {
+				lcVal = Get_lcVal(r,xx,liStuck,aStuck);
+                if (lcVal!="" && lcVal!=aText.substring(x-1,x)) {
+                    fcnt++; 
+                } else {
+                    break;
+                }
+            }
+            if (fcnt==3) {
+               qRow2FullyLoaded = true;
+            }      
+            fcnt=0;
+            for (xx=qRow1;xx<qRow1+3;xx++) {
+				lcVal = Get_lcVal(xx,c,liStuck,aStuck);
+                //lcVal = document.getElementById('n'+xx+c).value;
+
+                if (lcVal!="" && lcVal!=aText.substring(x-1,x)) {
+                    fcnt++; 
+                } else {
+                    break;
+                }
+            }
+            if (fcnt==3) {
+               qCol1FullyLoaded = true;
+            }
+            fcnt=0;
+            for (xx=qRow2;xx<qRow2+3;xx++) {
+				lcVal = Get_lcVal(xx,c,liStuck,aStuck);
+                if (lcVal!="" && lcVal!=aText.substring(x-1,x)) {
+                    fcnt++; 
+                } else {
+                    break;
+                }
+            }
+            if (fcnt==3) {
+               qCol2FullyLoaded = true;
+            }
+
+            if (!qC1Loaded) {
+                var fcnt=0; 
+                for (xx=qr;xx<qr+3;xx++) {
+					lcVal = Get_lcVal(xx,c1,liStuck,aStuck);
+                    //lcVal = document.getElementById('n'+xx+c1).value;
+                    if (lcVal!="") {
+                        fcnt++; 
+                    } else if (xx==r1 && xr1Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else if (xx==r2 && xr2Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else {
+                        break;
+                    }
+                }
+                if (fcnt==3) {
+                   qC1Loaded = true;
+                }         
+            }
+            if (!qC2Loaded) {
+                var fcnt=0;
+                for (xx=qr;xx<qr+3;xx++) {
+					lcVal = Get_lcVal(xx,c2,liStuck,aStuck);
+                    //lcVal = document.getElementById('n'+xx+c2).value;
+                    if (lcVal!="") {
+                        fcnt++;
+                    } else if (xx==r1 && xr1Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else if (xx==r2 && xr2Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else {
+                        break;
+                    }
+                }
+                if (fcnt==3) {
+                   qC2Loaded = true;
+                }         
+            }
+            if (!qR1Loaded) {
+                var fcnt=0;
+                for (xx=qc;xx<qc+3;xx++) {
+					lcVal = Get_lcVal(r1,xx,liStuck,aStuck);
+                    //lcVal = document.getElementById('n'+r1+xx).value;
+                    if (lcVal!="") {
+                        fcnt++;
+                    } else if (xx==c1 && xc1Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else if (xx==c2 && xc2Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else {
+                        break;
+                    }
+                }
+                if (fcnt==3) {
+                   qR1Loaded = true;
+                }         
+            }
+            if (!qR2Loaded) {
+                var fcnt=0;
+                for (xx=qc;xx<qc+3;xx++) {
+					lcVal = Get_lcVal(r2,xx,liStuck,aStuck);
+                    // lcVal = document.getElementById('n'+r2+xx).value;
+                    if (lcVal!="") {
+                        fcnt++;
+                    } else if (xx==c1 && xc1Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else if (xx==c2 && xc2Nums.includes(aText.substring(x-1,x))) {
+                        fcnt++;                              
+                    } else {
+                        break;
+                    }
+                }
+                if (fcnt==3) {
+                   qR2Loaded = true;
+                }         
+            }
+ 
+            var TotQwNum = qC1Loaded + qR1Loaded + qC2Loaded + qR2Loaded;
+            //var TotQFilled = qCol1FullyLoaded + qCol2FullyLoaded + qRow1FullyLoaded + qRow2FullyLoaded; // not used
+//if (aText.length == 1) {
+//    aText = aText.substring(x-1,x);
+//}
+            if (TotQwNum == 4) {
+                aText = aText.substring(x-1,x);
+                x=aText.length+1;                   
+            } else if (TotQwNum == 3) {
+                //if ((qR1Loaded + qR2Loaded + qCol1FullyLoaded == 3) && (QC1Row2Col1_WithMatch + QR2Row2Right_WithMatch == 1)) {
+                if ((qR1Loaded + qR2Loaded == 2) && ((QC1TopCol1_WithMatch + qCol2FullyLoaded == 2) || (QC1Bott2Col1_WithMatch + qCol1FullyLoaded == 2))) {
+                    aText = aText.substring(x-1,x);
+                    x=aText.length+1;
+                    FullyLoaded = (QC1TopCol1_WithMatch + qCol2FullyLoaded == 2) ? "C"+qRow2 : "C"+qRow1;
+                } else if ((qR1Loaded + qR2Loaded == 2) && ((QC2TopCol2_WithMatch + qCol2FullyLoaded == 2) || (QC2BottCol2_WithMatch + qCol1FullyLoaded == 2))) {
+                    aText = aText.substring(x-1,x);
+                    x=aText.length+1;
+                    FullyLoaded = (QC2TopCol2_WithMatch + qCol2FullyLoaded == 2) ? "C"+qRow2 : "C"+qRow1;
+                } else if ((qC1Loaded + qC2Loaded == 2) && ((QR1Row1Left_WithMatch + qRow2FullyLoaded == 2) || (QR1Row1Right_WithMatch + qRow1FullyLoaded == 2))) {
+                    aText = aText.substring(x-1,x);
+                    x=aText.length+1;
+                    FullyLoaded = (QR1Row1Left_WithMatch + qRow2FullyLoaded == 2) ? "R"+qCol2 : "R"+qCol1
+                } else if ((qC1Loaded + qC2Loaded == 2) && ((QR2Row2Left_WithMatch + qRow2FullyLoaded == 2) || (QR2Row2Right_WithMatch + qRow1FullyLoaded == 2))) {
+                    aText = aText.substring(x-1,x);
+                    x=aText.length+1;
+                    FullyLoaded = (QR2Row2Left_WithMatch + qRow2FullyLoaded == 2) ? "R"+qCol2 : "R"+qCol1;
+                }
+            } 
+        /**/
+        }
+    }
+    if (!lbDblClick){
+        return aText;
+    } else {
+        if (alertmsg == '') {
+            alertmsg = "Row: "+(parseInt(r,10)+1)+" Col: "+(parseInt(c,10)+1)+"            Available Options: "+aText.substring(0,aText.length);
+        }
+        document.getElementById('IdMessage').value = alertmsg;
+        document.getElementById('IdMessage').style.backgroundColor = "rgb(0,255,0)";
+        document.getElementById('IdMessage').style.borderColor = "red";
+		document.getElementById('IdMessage').style.visibility = 'visible'; // hidden visible
+		//document.getElementById('IdMessage').style.display = 'inline-block';
+        PaintRevert(true); //Paint all Background White prior to Showing Steps 
+        PaintStore = r.toString()+c.toString()+qr.toString()+qc.toString()+r1.toString()+r2.toString()+c1.toString()+c2.toString()+aText;
+        //RGBStore();
+        document.getElementById('n'+r+c).style.borderColor = "red";
+        if (aText.length ==1) {
+            document.getElementById("KeyB"+aText).style.borderColor = "red";
+        }
+        PaintCol(c,FullyLoaded,AllNumButOne); //,AllNumButOne
+        PaintRow(r,FullyLoaded,AllNumButOne);
+        PaintQuad(qr,qc,AllNumButOne);
+        if (aText.length == 1) { // && !AllNumButOne
+            PaintColX(c1,c2,aText,false);
+            PaintRowX(r1,r2,aText,false);
+        }
+        if (giHintOn) {
+            document.getElementById("myHint").addEventListener("click", ClearPaint); 
+            //document.addEventListener("click", ClearPaint); 
+        } else {
+            giDblClick = false;//giDblClick = true;
+            document.addEventListener("click", ClearPaint); 
+        }
+    }
+}
+    /*
+      Quad 0 is Clicked Quad 
+      Quad 1 is first not clicked Quad       
+      Quad 2 is Second not clicked Quad
+    //r1 - First Row in Quad 0 not in Cell    
+    //r2 - Second Row in Quad 0 not in Cell    
+    //c1 - First Column in Quad 0 not in Cell    
+    //c2 - Second Column in Quad 0 not in Cell
+                //c1 - 0
+            //c2 - 2
+            //r1 - 7
+            //r2 - 8
+    r = 6 and c=1
+                    QC1TopCol1_WithMatch - Quad 1R - First Row First Col in Not Clicked
+                    QC1Bott2Col1_WithMatch - Quad 2R - Second Row First Col in Not Clicked
+                    QC2TopCol2_WithMatch - Quad 1R - First Row Second Col in Not Clicked
+                    QC2BottCol2_WithMatch - Quad 2R - Second Row Second Col in Not Clicked
+                    
+                    QR1Row1Left_WithMatch - Quad 1C - First Row First Col in Not Clicked
+                    QR1Row1Right_WithMatch - Quad 2C - Second Row First Col in Not Clicked
+                    QR2Row2Left_WithMatch - Quad 1C - First Row Second Col in Not Clicked
+                    QR2Row2Right_WithMatch - Quad 2C - Second Row Second Col in Not Clicked
+	1	2	3	4	5	6	7	8	9
+    r1     r2
+A	qRow1_	_	5	4	9	6	8	3  Which C/R Quad has match to compare to C/R Quad that is Fully Loaded
+B	_	_	_	8	7	3	2	1	9  qC1Loaded is Column 1 and has a 4
+C	_	_	_	2	6	1	7	4	5  qC2Loaded if r2 Column 3
+
+D	qRow2_	_	3	2	7	8	5	1  qRow1 is 0 first row in Quad not with cell
+E	_	_	_	4	5	6	9	7	2  qRow2 is 3 Second row in Quad not with cell
+F	_	_	_	1	9	8	4	3	6  qCol1 is 3 first Column in Quad not with cell
+                                       qCol2 is 6 Second Column in Quad not with cell
+G	_	X	_	qCol1_	_	qCol2	_	_
+H	_	_	_	_	_	_	_	_	_ c1
+I	_	_	_	_	_	_	_	_	_ c2
+*/         
+function PaintColX(c1,c2,aText,liRevert) {
+    var ii = 28;
+    for(rr=0; rr<9; rr++) { // Check Column Numbers
+        if (liRevert) {
+            if (document.getElementById('n'+rr+c1).style.borderColor == "black") {
+                document.getElementById('n'+rr+c1).style.borderColor = "rgb(255,255,255)";
+            }
+            if (document.getElementById('n'+rr+c2).style.borderColor == "black") {
+                document.getElementById('n'+rr+c2).style.borderColor = "rgb(255,255,255)";
+            }
+        } else {
+            if (document.getElementById('n'+rr+c1).value == aText) {
+                document.getElementById('n'+rr+c1).style.borderColor = "black";
+                document.getElementById('n'+rr+c1).style.backgroundColor = "rgb(255,255,255)"; 
+            }
+            if (document.getElementById('n'+rr+c2).value == aText) {
+                document.getElementById('n'+rr+c2).style.borderColor = "black";
+                document.getElementById('n'+rr+c2).style.backgroundColor = "rgb(255,255,255)"; 
+            }
+        }
+    }    
+}
+function PaintRowX(r1,r2,aText,liRevert) {
+    for(cc=0; cc<9; cc++) { // Check Column Numbers
+        if (liRevert) {
+            if (document.getElementById('n'+r1+cc).style.borderColor == "black") {
+                document.getElementById('n'+r1+cc).style.borderColor = "rgb(255,255,255)";
+            }
+            if (document.getElementById('n'+r2+cc).style.borderColor == "black") {
+                document.getElementById('n'+r2+cc).style.borderColor = "rgb(255,255,255)";
+            }
+        } else {
+            if (document.getElementById('n'+r1+cc).value == aText) {
+                document.getElementById('n'+r1+cc).style.borderColor = "black";
+                document.getElementById('n'+r1+cc).style.backgroundColor = "rgb(255,255,255)"; 
+            }
+            if (document.getElementById('n'+r2+cc).value == aText) {
+                document.getElementById('n'+r2+cc).style.borderColor = "black";
+                document.getElementById('n'+r2+cc).style.backgroundColor = "rgb(255,255,255)";
+            }
+        }
+    }    
+}
+function RGBStore() {
+    var xr,xc; //,qr,qc;
+    xr=parseInt(PaintStore.substring(0,1),10);
+    xc=parseInt(PaintStore.substring(1,2),10);
+    document.getElementById('n'+xr+xc).style.borderColor = "red";
+    //PaintStore = r.toString()+c.toString()+qr.toString()+qc.toString()+r1.toString()+r2.toString()+c1.toString()+c2.toString()+aText;
+
+}
+function ClearPaint() {
+    if (PaintStore != "") {
+        var xr,xc,qr,qc;
+        xr=parseInt(PaintStore.substring(0,1),10);
+        xc=parseInt(PaintStore.substring(1,2),10);
+        qr=parseInt(PaintStore.substring(2,3),10);
+        qc=parseInt(PaintStore.substring(3,4),10);
+        xr1=parseInt(PaintStore.substring(4,5),10);
+        xr2=parseInt(PaintStore.substring(5,6),10);
+        xc1=parseInt(PaintStore.substring(6,7),10);
+        xc2=parseInt(PaintStore.substring(7,8),10);
+        aTx=parseInt(PaintStore.substring(8,9),10);
+        PaintRevert(false);
+        if (PaintStore.length == 9) {//only one optionis available
+            PaintColX(xc1,xc2,aTx,true);
+            PaintRowX(xr1,xr2,aTx,true);
+        }
+        PaintStore="";
+        document.getElementById('IdMessage').value = "";
+		//document.getElementById('IdMessage').style.display = 'none';
+        document.getElementById('IdMessage').style.visibility = 'hidden';
+        document.getElementById('n'+xr+xc).style.borderColor = "rgb(255,255,255)";
+        //document.removeEventListener("click", ClearPaint);
+    }
+    document.removeEventListener("click", ClearPaint);
+    document.removeEventListener("mousemove", ClearPaint);
+    document.getElementById("myHint").removeEventListener("click", ClearPaint); 
+    giDblClick = false;
+}
+function PaintRevert(PaintWhite) {
+    for(rr=0; rr<9; rr++) { // Check Quadrent
+        for(cc=0; cc<9; cc++) {
+            if (PaintWhite == 2) { //PaintRevert(2)
+                document.getElementById('n'+rr+cc).style.backgroundColor = "rgb(255,255,255)";
+                aPaintStore[rr][cc] = "rgb(255,255,255)";
+            } else if (PaintWhite || aPaintStore[rr][cc] == "") {
+                document.getElementById('n'+rr+cc).style.backgroundColor = "rgb(255,255,255)";
+            } else {
+                document.getElementById('n'+rr+cc).style.backgroundColor = aPaintStore[rr][cc];
+            }
+            document.getElementById('n'+rr+cc).style.borderColor = "rgb(255,255,255)";
+        }
+    }
+}
+function PaintQuad(qr,qc,AllNumButOne) {
+    for(rr=qr; rr<qr+3; rr++) { // Check Quadrent
+        for(cc=qc; cc<qc+3; cc++) {
+            if (AllNumButOne) {
+                document.getElementById('n'+rr+cc).style.backgroundColor = "rgb(0,200,225)";  //Lite Blue          
+            } else {
+                document.getElementById('n'+rr+cc).style.backgroundColor = "rgb(0,255,0)";  //Lime
+            }
+        }
+    }
+}
+function PaintCol(xc,FullyLoaded,AllNumButOne) {
+    if (FullyLoaded != "" && FullyLoaded.substring(0,1)=="C") {
+        var liStartRow = parseInt(FullyLoaded.substring(1,2),10);
+        var liEndRow = liStartRow + 3; // If Filled with other than 99, then a fully load Quad Row aided in a Single Option
+    } else {
+        var liStartRow = 99;
+        var liEndRow = 99;
+    }
+    for(rr=0; rr<9; rr++) { // Check Column Numbers
+        if (rr >= liStartRow && rr < liEndRow) {
+            document.getElementById('n'+rr+xc).style.borderColor = "orange"; //"rgb(0,0,0)";
+        }
+        //document.getElementById('n'+rr+xc).style.backgroundColor = "rgb(0,255,0)";  //Lime 
+        if (AllNumButOne) {
+            document.getElementById('n'+rr+xc).style.backgroundColor = "rgb(0,200,225)";  //Lime          
+        } else {
+            document.getElementById('n'+rr+xc).style.backgroundColor = "rgb(0,255,0)";  //Lime
+        }
+    }
+}
+function PaintRow(xr,FullyLoaded,AllNumButOne) {
+    if (FullyLoaded != ""  && FullyLoaded.substring(0,1)=="R") {
+        var liStartRow = parseInt(FullyLoaded.substring(1,2),10);
+        var liEndRow = liStartRow + 3; // If Filled with other than 99, then a fully load Quad Column aided in a Single Option
+    } else {
+        var liStartRow = 99;
+        var liEndRow = 99;
+    }
+    for(cc=0; cc<9; cc++) { // Get Row Numbers
+        if (cc >= liStartRow && cc < liEndRow) {
+            document.getElementById('n'+xr+cc).style.borderColor = "orange"; //"rgb(0,0,0)";
+        }
+        //document.getElementById('n'+xr+cc).style.backgroundColor = "rgb(0,255,0)";  //Lime             
+        if (AllNumButOne) {
+            document.getElementById('n'+xr+cc).style.backgroundColor = "rgb(0,200,225)";  //Lime          
+        } else {
+            document.getElementById('n'+xr+cc).style.backgroundColor = "rgb(0,255,0)";  //Lime
+        }
+    }
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+function Hint() {
+    if (giShowNotes && !giHintOn) {
+        return;
+    }
+    giHintOn = !giHintOn;
+    if (!giHintOn) {
+        CurrentBox="";
+        for(rw=1; rw<=9; rw++) {
+            document.getElementById("KeyB"+rw).style.borderColor = "white";
+        }
+        return;
+    }
+    if (giEmptyCells || giDblClick || giHintsAvailable <=0 || giShowNotes) {
+        return;
+    }
+    giHintCnt++; 
+    var totSingles = 0;
+    var LastSingleFound = "";
+    for(r=0; r<9; r++) { //  
+        for(c=0; c<9; c++) {
+            if (document.getElementById('n'+r+c).value == "" || document.getElementById('n'+r+c).value.substring(0,1) == "*") {//!= ""
+                lresults=FindValues('n'+r+c,false,false,[],false);
+                if (lresults.length==1){
+                    totSingles++; //totSingles = totSingles + ((lresults.length == 1) ? 1 : 0);
+                    if (giHintCnt == totSingles) {
+                        //FindValues('n'+r+c+"W",true,false,[]);
+                        FindValues('n'+r+c,true,false,[],false);
+                        CurrentBox='n'+r+c;
+                        
+                    }
+                    LastSingleFound = 'n'+r+c;
+                }
+            }
+        }
+    }
+     //ondblclick="FindValues(id,true,false,[])"
+    if (CurrentBox == "" && LastSingleFound != "") {//No Single Stored
+        CurrentBox=LastSingleFound;
+        FindValues(CurrentBox,true,false,[],false); // Paint Double Click Hint
+    }
+    if (giHintCnt >= totSingles) {
+        giHintCnt = 0;
+        giHintOn = false;
+    }
+    if (totSingles==0) {
+        //alert("No Hints Available...Try Solve...");
+        ShowMessage("No Hints Available...Try Nudge...","Y");
+        document.getElementById('IdHint').value = giHintsAvailable;
+    }
+}
+function isNotesOpen(){
+    var NotesOpen = false;
+    for (x=1;x<=3;x++) {
+        if (document.getElementById("Section"+x).style.display === "block") {
+            NotesOpen = true;
+            break;
+        }        //document.getElementById("NoteSec"+s).innerText = '+';
+    }
+    return NotesOpen;
+}
+function isChange(){
+    if (giLevel == 1) {
+        FindOptions(false,true,false);
+    }
+    var cnt =0;
+    for(r=0; r<9; r++) { //  
+        for(c=0; c<9; c++) {
+            if (document.getElementById('n'+r+c).value == "" || document.getElementById('n'+r+c).style.font != "") { //document.getElementById('n'+r+c).value.substring(0,1) == "*"
+                cnt++;
+            }
+        }
+    }
+    if (cnt==81) {
+        if (!CheckError(true)) {
+            alert('Congratulations! 1133');
+        }
+    }
+    UndoRestore(true);
+    giGameOver=PaintNumbers(true);
+}
+function isNumberKey(evt){
+    var charCode = (evt.which) ? evt.which : event.keyCode
+    if (charCode > 31 && (charCode < 49 || charCode > 57)) {return false; }
+    return true;
+}
+function formatMoney(n, c, d, t) {
+  var c = isNaN(c = Math.abs(c)) ? 0 : c,
+    d = d == undefined ? "." : d,
+    t = t == undefined ? "," : t,
+    s = n < 0 ? "-" : "",
+    i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))),
+    j = (j = i.length) > 3 ? j % 3 : 0;
+
+  return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+};
+function AdjustAmount(liAmount) {
+    var liDifficulty = 0;
+	if (liAmount>0) {
+		liDifficulty = Math.round(((50-giStartCnt)/100)*liAmount,0);
+	}
+    giAmount=giAmount+liAmount+liDifficulty; //  +
+    document.getElementById('IdAmount').value = formatMoney(giAmount);
+}
+function CheckInputError(kNumber) {
+    var liHasErrors = aSolved[CurrentBox.substring(1,2)][CurrentBox.substring(2,3)] != kNumber;
+    
+	if (liHasErrors && giMulligan > 0) {
+        var r=CurrentBox.substring(1,2);
+        var c=CurrentBox.substring(2,3);
+        var qr=(r<3?0:(r<6?3:6));
+        var qc=(c<3?0:(c<6?3:6));
+        var qText=GetQuadValues(qr,qc,false,false);
+		
+        if (qText.includes(kNumber)) {
+            giMulligan--;
+			ShowMessage(kNumber+" Exists in Quad."+giMulligan+" Mulligan remaining.");
+            //alert("Error! Number "+kNumber+" Already Exists in Quad.\nUsing Mulligan to avoid 10,000 penalty. \nYou have "+giMulligan+" Mulligan remaining.");
+            return 3; //giMulliganAllowed  Row: "+(qr+1)+" Col: "+(qc+1)+
+        }
+    }
+	
+    if (giCheckErrors && liHasErrors && giLevel < 4) {
+        /*AdjustAmount(-10000);
+        giMistake++;
+        ShowMessage("Incorrect number: "+kNumber+" Deducting 10,000 points...");
+        alert('Incorrect number: '+kNumber+' Deducting 10,000 points...');
+        return true;*/
+        return liHasErrors;
+    } else if (!liHasErrors) {
+        return false;
+    }
+}
+
+function canBet() {
+    if (CurrentBox == "" || document.getElementById('MyPause').innerText == "Continue" || giManualLoad || document.getElementById(CurrentBox).value != "" || document.getElementById("MyCellNums").className == "buttonOn" || document.getElementById("MyBold").className == "buttonOn" || document.getElementById('o'+CurrentBox.substring(1,3)).value.length == 1) {
+        return false;
+    }
+	return true;
+	
+	/*
+	var QuadCoord=getQuadCoord(CurrentBox);
+    var r=CurrentBox.substring(1,2);
+    var c=CurrentBox.substring(2,3);
+    var qr=parseInt(QuadCoord.substring(1,2),10); //(r<3?0:(r<6?3:6));
+    var qc=parseInt(QuadCoord.substring(2,3),10); //(c<3?0:(c<6?3:6));
+    var CurOpts = document.getElementById('o'+CurrentBox.substring(1,3)).value; //document.getElementById('o'+r+c).value;
+    var liOddsNum = 0;
+    var ChkCell = "";
+	var ChkOptions = "";
+    var liAnswer = aSolved[r][c];
+	var ChkAns = "";
+	var CurOptions = document.getElementById('o'+r+c).value;
+    for(rr=qr; rr<qr+3; rr++) { // Check Quadrent
+        for(cc=qc; cc<qc+3; cc++) {
+            ChkCell='n'+rr+cc;
+			if (document.getElementById('n'+rr+cc).style.font == "") {
+				ChkOptions = document.getElementById('n'+rr+cc).value; 
+			} else {
+				ChkOptions = "";
+			} //ChkOptions = document.getElementById('o'+rr+cc).value;
+			ChkAns = aSolved[rr][cc];
+            if (CurrentBox!=ChkCell && document.getElementById(ChkCell).value == "" && 
+				(ChkOptions.includes(liAnswer) || CurOptions.includes(ChkAns))) {
+                document.getElementById(ChkCell).style.borderColor = "rgb(0,200,225)";
+                liOddsNum++;
+            }
+        }
+    }
+	//if (CurrentBox2=="") {
+	//	CurrentBox2 = CurrentBox;
+	//}
+    if (liOddsNum==0) {
+        ShowMessage("No Bets Available for this Cell...");
+    } else {
+        ShowMessage("Bet "+(liOddsNum+1)+" to 1 Odds...");
+        document.getElementById(CurrentBox).style.borderColor = "red";
+    }
+*/
+}
+function onBet() {
+    if (CurrentBox == "" || document.getElementById('MyPause').innerText == "Continue" || giManualLoad || document.getElementById(CurrentBox).value != "") {
+        return;
+    }
+	if (giShowNotes) {ToggleNotes();}
+	if (document.getElementById("MyCellNums").className == "buttonOn") {
+		CellNumsOn();
+	}
+	if (document.getElementById("MyBold").className == "buttonOn") {
+		BoldNum(0);
+	}		
+	var QuadCoord=getQuadCoord(CurrentBox);
+	
+	if (giQuadBet.includes(QuadCoord)) {
+		if (giMulligan > 0) {
+			giMulligan--;
+			AdjustAmount(-10000);
+			ShowMessage(kNumber+" Exists in Quad."+giMulligan+" Mulligans remaining.");
+			//alert("Bet Error made in this Quad.\nUsing Mulligan to allow Bet with 10,000 penalty. \nYou have "+giMulligan+" Mulligan remaining.");
+		} else {
+			ShowMessage("No Bets allowed again in this Quad again...");
+			//alert("No Bets allowed again in this Quad again...");
+			return;
+		}
+	}
+	
+	//if (document.getElementById('o'+CurrentBox.substring(1,3)).value.length==1) {
+	//	ShowMessage("No Bets Available for this Cell....");
+	//	return;
+	//}
+    var r=CurrentBox.substring(1,2);
+    var c=CurrentBox.substring(2,3);
+    var qr=parseInt(QuadCoord.substring(1,2),10); //(r<3?0:(r<6?3:6));
+    var qc=parseInt(QuadCoord.substring(2,3),10); //(c<3?0:(c<6?3:6));
+    var CurOpts = document.getElementById('o'+r+c).value;
+    var liOddsNum = 0;
+    var ChkCell = "";
+	var ChkOptions = "";
+    var liAnswer = aSolved[r][c];
+	var ChkAns = "";
+    CurrentBox2="";
+	var CurOptions = document.getElementById('o'+r+c).value;
+    for(rr=qr; rr<qr+3; rr++) { // Check Quadrent
+        for(cc=qc; cc<qc+3; cc++) {
+            ChkCell='n'+rr+cc;
+			/*if (document.getElementById('n'+rr+cc).style.font == "") {
+				ChkOptions = document.getElementById('n'+rr+cc).value; 
+			} else {
+				ChkOptions = "";
+			} *///
+			ChkOptions = document.getElementById('o'+rr+cc).value;
+			ChkAns = aSolved[rr][cc];
+            if (CurrentBox!=ChkCell && (document.getElementById(ChkCell).value == "" || document.getElementById(ChkCell).style.font != "")
+				) { //ChkOptions.includes(liAnswer)
+				
+				
+				for (xx=1;xx<CurOptions.length+1;xx++) {
+					ChkAns=CurOptions.substring(xx-1,xx);
+					if (ChkOptions.includes(ChkAns)) {
+						CurrentBox2 = CurrentBox2+ChkCell; //ChkCell; //
+						document.getElementById(ChkCell).style.borderColor = "rgb(0,200,225)";
+						liOddsNum++;
+						break;
+					}
+				}
+				
+                //CurrentBox2 = CurrentBox2+ChkCell; //ChkCell; //
+                //document.getElementById(ChkCell).style.borderColor = "rgb(0,200,225)";
+                //liOddsNum++;
+            } //(ChkOptions.includes(liAnswer) || CurOptions.includes(ChkAns))
+        }
+    }
+	//if (CurrentBox2=="") {
+	//	CurrentBox2 = CurrentBox;
+	//}
+    if (liOddsNum==0) {
+        ShowMessage("No Bets Available for this Cell...","Y");
+    } else {
+        ShowMessage("Bet "+(liOddsNum+1)+" to 1 Odds...","B");
+        document.getElementById(CurrentBox).style.borderColor = "red";
+    }
+}
+function getQuadCoord(lcCell) {
+	var qr=lcCell.substring(1,2);
+	var qc=lcCell.substring(2,3);
+	qr=(qr<3?0:(qr<6?3:6));
+	qc=(qc<3?0:(qc<6?3:6));
+	return 'n'+qr+qc;
+}
+function CellNumsOn(){
+	ClearBorder();
+	ClearMsg();
+	if (giShowNotes) {ToggleNotes();}
+	if (document.getElementById("MyCellNums").className == "buttonOn") {
+		document.getElementById("MyCellNums").className = "button";
+		//ClearMsg();
+	} else {
+		document.getElementById("MyCellNums").className = "buttonOn";
+		if (CurrentBox != "") {
+			CellNums();
+		}
+	}
+	if (giMouseWasDn) {
+		giMouseWasDn = false;
+		BoldNum(0);
+	}
+}
+function CellNums(){
+    if (CurrentBox == "" || CurrentBox.substring(0,1) =='o' || document.getElementById('MyPause').innerText == "Continue" || giManualLoad || document.getElementById(CurrentBox).value != "") {
+        return;
+	}
+	if (document.getElementById(CurrentBox).style.borderColor != "rgb(255,0,0)") {
+		document.getElementById(CurrentBox).style.borderColor = "rgb(255,0,0)";
+	}
+    var r=CurrentBox.substring(1,2);
+    var c=CurrentBox.substring(2,3);
+	var allText = GetCellNumbers(r,c,false,[]);// GetCellNumbers(r,c,liStuck,aStuck);
+	var aText=''; // Available
+	var rText=''; // Remaininig
+	for(rr=1; rr<10; rr++) {
+        if (allText.includes(rr.toString())) {
+            aText+=rr.toString(); //+","
+        } else {
+			rText+=rr.toString();
+		}
+    }
+	//giCellCount++;
+	AdjustAmount(-500);
+	r++; //Convert to Visual Row Number
+	c++; //Convert to Visual Column Number
+	var aText = "Cell "+r+"-"+c+" Numbers Used: "+aText+(aText.length == 8?"...":".")+" Cost 500 points."; // + "UnUsed: "+rText
+	ShowMessage(aText,"Y");
+    if (true) {
+        document.getElementById(CurrentBox).style.font = "italic bold 12px arial,serif";
+        document.getElementById(CurrentBox).value = "*"+rText;
+        document.getElementById(CurrentBox).style.backgroundColor = "rgb(255,255,0)";
+        document.getElementById(CurrentBox).style.foregroundColor = "rgb(255,0,0)";
+        aPaintStore[CurrentBox.substring(1,2)][CurrentBox.substring(2,3)] = "rgb(255,255,0)";
+        document.getElementById("MyCellNums").className = "button";
+    }
+}
+//id="MyNotesAll" onClick="CellNumsAll()"
+function CellNumsAll() { // Test to load all possible options in empty cells to figure out pattern to solve
+    //var aText = ''; // Available
+    var rText = ''; // Remaininig
+    var allText = ''; // All Available
+    
+	if (document.getElementById("MyNotesAll").className == "buttonOn") {
+		document.getElementById("MyNotesAll").className = "button";
+		//ClearMsg();
+	} else {
+		document.getElementById("MyNotesAll").className = "buttonOn";
+	}
+    for(rr0=0; rr0<9; rr0++) { //  
+        for(cc0=0; cc0<9; cc0++) {
+            ChkCell='n'+rr0+cc0;
+            if (document.getElementById("MyNotesAll").className == "buttonOn") {
+                if (document.getElementById(ChkCell).value == "") {
+                    allText = GetCellNumbers(rr0,cc0,false,[]);
+                    //aText=''; // Available
+                    rText=''; // Remaininig
+                    for(rr1=1; rr1<10; rr1++) {
+                        if (!allText.includes(rr1.toString())) {
+                            rText+=rr1.toString();
+                        }
+                    }
+                    if (rText !="") {
+                        document.getElementById(ChkCell).style.font = "italic bold 12px arial,serif";
+                        document.getElementById(ChkCell).value = "*"+rText;
+                        document.getElementById(ChkCell).style.backgroundColor = "rgb(255,255,0)";
+                        document.getElementById(ChkCell).style.foregroundColor = "rgb(255,0,0)";
+                        aPaintStore[ChkCell.substring(1,2)][ChkCell.substring(2,3)] = "rgb(255,255,0)";
+                    }
+                }
+            } else if (document.getElementById(ChkCell).style.font != "") {
+                document.getElementById(ChkCell).value = "";
+                document.getElementById(ChkCell).style.backgroundColor = "rgb(255,255,255)";
+                document.getElementById(ChkCell).style.foregroundColor = "rgb(0,0,0)";
+                document.getElementById(ChkCell).style.font = "";
+                aPaintStore[ChkCell.substring(1,2)][ChkCell.substring(2,3)] = "rgb(255,255,255)";
+            }
+        }
+    }
+}
+    
+function BoldNum(liNum) {
+	if (liNum==0) {
+		document.getElementById("MyBold").className = "button";
+		//document.getElementById('MyBold').style.fontWeight="";
+		//document.getElementById('MyBold').style.foregroundColor="rgb(255,255,255)";
+	} else {
+		//document.getElementById('MyBold').style.fontWeight="bold";
+		//document.getElementById('MyBold').style.foregroundColor="rgb(255,0,0)";
+		//document.getElementById("MyBold").className = "buttonOn";
+		giBoldCount++;
+		AdjustAmount(-500);
+		ShowMessage("Highlighting Number: "+liNum+" Costs 500...","Y");
+	}
+    for(r=0; r<9; r++) { //  
+        for(c=0; c<9; c++) {
+			if (document.getElementById('n'+r+c).style.font != "") {
+				//do nothing
+			} else if (liNum>0 && document.getElementById('n'+r+c).value == liNum) {
+				document.getElementById('n'+r+c).style.fontWeight="bold";
+				document.getElementById('n'+r+c).style.fontSize = "large";
+			} else {
+				document.getElementById('n'+r+c).style.fontWeight="";
+				document.getElementById('n'+r+c).style.fontSize = "";
+			}
+		}
+	}
+
+	//giMouseWasDn = false;
+	//document.querySelector('.child').addEventListener('mousedown', onMousedown, false);
+}
+function BoldOn(){
+	if (giShowNotes) {ToggleNotes();}
+	if (giMouseWasDn) {
+		giMouseWasDn = false;
+		BoldNum(0);
+		return;
+	}
+	ClearBorder();
+	document.getElementById("MyBold").className = "buttonOn";
+	document.getElementById("MyCellNums").className = "button";
+	ClearMsg();
+	giMouseWasDn=true;
+}
+function KeyNoteLast(kNumber) {
+    if (giShowNotes) {
+        if (kNumber=='0') {
+		    document.getElementById('KeyNoteLast').innerText = '#';
+        } else {
+		    giShowNotesNum = 0;
+            document.getElementById('KeyNoteLast').innerText = '#';
+        }
+    }
+}
+
+//if (giShowNotes && document.getElementById('KeyNoteLast').innerText!='0') {}
+		    
+function KeyB(kNumber) {//giHintsAvailable
+	if (giManualLoad) {
+		document.getElementById(CurrentBox).value = kNumber;
+		return;
+	}
+	if (giMouseWasDn) {
+		BoldNum(kNumber);
+		return;
+	}
+	if (document.getElementById("MyCellNums").className == "buttonOn") {
+		document.getElementById("MyCellNums").className = "button";
+		ClearMsg();
+	} 
+    if (CurrentBox != "" && document.getElementById(CurrentBox).value != "" && !giShowNotes && document.getElementById(CurrentBox).value.substring(0,1) != "*") {
+        ShowMessage("Box has already been filled with "+document.getElementById(CurrentBox).value+"...","Y");
+       	return;
+    }
+
+    var liHasError = false;
+    var liCurrTime = new Date();
+    document.getElementById('IdTimerCnt').value = Math.round((liCurrTime - giStartTime)/1000/60) - giPauseTotTime;
+    if (CurrentBox == "" || CurrentBox.substring(0,1) =='o' || document.getElementById('MyPause').innerText == "Continue") {
+        return;
+    } else if (giShowNotes) {
+        if (kNumber=='0') {
+            document.getElementById(CurrentBox).style.backgroundColor = "rgb(255,255,255)";
+            document.getElementById(CurrentBox).style.foregroundColor = "rgb(0,0,0)";
+            document.getElementById(CurrentBox).style.font = "";
+            document.getElementById(CurrentBox).value = "";
+            aPaintStore[CurrentBox.substring(1,2)][CurrentBox.substring(2,3)] = "rgb(255,255,255)";
+			document.getElementById('KeyNoteLast').innerText = '#';
+			giShowNotesNum=0;
+            return;
+        } else {
+            giShowNotesNum = kNumber;
+			document.getElementById('KeyNoteLast').innerText = giShowNotesNum;
+			if (RemoveNote(kNumber,true)) { //Check if already exist
+                return;
+            } else if (document.getElementById(CurrentBox).value == "") { 
+                document.getElementById(CurrentBox).style.font = "italic bold 12px arial,serif";
+                document.getElementById(CurrentBox).value = "*";
+                document.getElementById(CurrentBox).style.backgroundColor = "rgb(255,255,0)";
+                document.getElementById(CurrentBox).style.foregroundColor = "rgb(255,0,0)";
+                aPaintStore[CurrentBox.substring(1,2)][CurrentBox.substring(2,3)] = "rgb(255,255,0)";
+            }
+            if (!document.getElementById(CurrentBox).value.includes(kNumber)) {
+				/*document.getElementById(CurrentBox).value = document.getElementById(CurrentBox).value + kNumber;
+				*/
+				if (document.getElementById(CurrentBox).value.length == 1) {
+					document.getElementById(CurrentBox).value = document.getElementById(CurrentBox).value + kNumber;
+				} else {
+					var cSorted = "";
+					var cUnSorted = document.getElementById(CurrentBox).value + kNumber;
+					for (ii = 1; ii < 10; ii++) {
+						if (cUnSorted.includes(ii.toString())) {
+							cSorted+=ii.toString();
+						}
+					}
+					//document.getElementById(CurrentBox).value = cSorted;
+					document.getElementById(CurrentBox).value = "*"+cSorted;
+				}
+				
+            }
+        }
+    } else if (kNumber == 0) {
+        document.getElementById(CurrentBox).value = "";
+    } else if (!giShowNotes) { //CurrentBox.substring(0,1) == 'n'
+        giShowNotesNum = 0;
+		if (giCheckErrors) {
+            liHasError=CheckInputError(kNumber);
+			if (liHasError == 3){
+				return;
+			}
+        } 
+        
+        //if (document.getElementById(CurrentBox).value.substring(0,1) == "*") {
+        if (!liHasError && document.getElementById(CurrentBox).style.font != "") {
+            document.getElementById(CurrentBox).style.backgroundColor = "rgb(255,255,255)";
+            document.getElementById(CurrentBox).style.foregroundColor = "rgb(0,0,0)";
+            document.getElementById(CurrentBox).style.font = "";
+        } else {
+			document.getElementById(CurrentBox).style.borderColor = "red"; 
+		}
+        if (CurrentBox2 != "") {
+            var MyOdds = CurrentBox2.length/3;//document.getElementById('o'+CurrentBox.substring(1,3)).value.length;
+            var mySelect = document.getElementById("myBet");
+            var BetIs = 0;
+            for (i = 0; i < mySelect.length; i++) {
+                if (mySelect.options[i].selected) {
+                    BetIs = i+1;
+                    break;
+                }
+            }
+            if (BetIs == 1) {
+                BetIs = 10000;
+            } else if (BetIs == 2) {
+                BetIs = 15000;
+            } else if (BetIs == 3) {
+                BetIs = 20000;
+            } else if (BetIs == 4) {
+                BetIs = 25000;
+            }
+            var liAmount = BetIs * (MyOdds+1);
+			giBetCnt++;
+            if (liHasError) {
+				giQuadBet=giQuadBet+getQuadCoord(CurrentBox2.substring(0,3));
+                AdjustAmount(BetIs * -1);
+				giTotBets = giTotBets - BetIs;
+				giMistake++;
+				document.getElementById('IdMistake').value = giMistake;
+				giTotLost = giTotLost+BetIs;
+                ShowMessage("Incorrect number: "+kNumber+" Deducting "+formatMoney(BetIs)+" points...","Y");
+                for (x=0;x<CurrentBox2.length;x=x+3) {
+                    document.getElementById(CurrentBox2.substring(x,x+3)).style.borderColor = "rgb(255,255,255)";
+                }
+                CurrentBox2 = "";
+				 
+                return true;
+            } else {
+				giTotBets = giTotBets + liAmount;
+                AdjustAmount(liAmount);
+                ShowMessage((MyOdds>2?"Awesome":"Nice")+" Bet...Number: "+kNumber+" Adding "+liAmount+" points...","B");
+                var lcCurrentBox2="";
+                for (x=0;x<CurrentBox2.length;x=x+3) {
+                    lcCurrentBox2 = CurrentBox2.substring(x,x+3);
+                    document.getElementById(lcCurrentBox2).style.borderColor = "#4CAF50";
+                    document.getElementById(lcCurrentBox2).value = aSolved[lcCurrentBox2.substring(1,2)][lcCurrentBox2.substring(2,3)];
+                }
+                //document.getElementById('o'+CurrentBox.substring(1,3)).value = "";
+            }
+        } else if (!liHasError) {
+            if (giLevel == 1 && !giHintOn && document.getElementById('o'+CurrentBox.substring(1,3)).value.length >= 2) {
+				var SolveAmt = 5000 * document.getElementById('o'+CurrentBox.substring(1,3)).value.length;
+            	AdjustAmount(SolveAmt);
+                ShowMessage('Nice...adding '+formatMoney(SolveAmt)+' points...',"B");
+            } else if (document.getElementById('IdLoadCnt2').value == 9 && document.getElementById('IdTimerCnt').value <=5 && giHintsAvailable == 15) { 
+				//document.getElementById('IdLoadCnt2').value = giTotCnt - giStartCnt;
+            	AdjustAmount(100000);
+                ShowMessage("10 Solves in less than 5 mins...adds 100,000 points...","B");
+				gi10IN5=true;
+			} else {
+            	AdjustAmount((giHintOn) ? 2000 : 5000);
+                ShowMessage(((giHintOn) ? "Hint" : "Manual Solve")+' adds '+((giHintOn) ? '2,000' : '5,000')+' points...',"B");
+            }
+        } else if (liHasError) {
+            AdjustAmount(-10000);
+			giTotLost=giTotLost+10000;
+            giMistake++;
+			document.getElementById('IdMistake').value = giMistake;
+            ShowMessage("Incorrect number: "+kNumber+" Deducting 10,000 points...","Y");
+            return true;
+        }
+        if (!liHasError || giLevel > 2 || document.getElementById(CurrentBox).style.font != "") { 
+            //document.getElementById(CurrentBox).value.substring(0,1) == "*"
+            document.getElementById(CurrentBox).value = kNumber;
+            aPaintStore[CurrentBox.substring(1,2)][CurrentBox.substring(2,3)] = "rgb(255,255,255)";
+            document.getElementById(CurrentBox).style.borderColor = "#4CAF50";
+            RemoveNote(kNumber,false);
+        }
+        /*if (giShowNotes) {
+            if (document.getElementById('o'+CurrentBox.substring(1,3)).value != "") { // replace the 'n' with 'o' like from 'n12' to 'o12'
+                document.getElementById('o'+CurrentBox.substring(1,3)).value = "";
+            }
+        }*/
+    } else if (giShowNotes) { //CurrentBox.substring(0,1) == 'o'
+        document.getElementById(CurrentBox).value = document.getElementById(CurrentBox).value + kNumber;
+    }
+    if (giLevel == 1) {
+        FindOptions(false,true,false);
+    }
+    UndoRestore(true);
+    if (giHintOn && CurrentBox.substring(0,1) == 'n') {
+        Hint();
+        document.getElementById("myHint").removeEventListener("click", ClearPaint); 
+        ClearPaint();
+    }
+    if (!giGameOver && giTotCnt > giStartCnt) {
+        gGameStarted = true;
+		SetupBlur(1);
+    }
+    giGameOver=PaintNumbers(!liHasError);
+}
+
+function RemoveNote(kNumber,chkExist) {
+ 	var QuadCoord=getQuadCoord(CurrentBox);
+    var r=CurrentBox.substring(1,2);
+    var c=CurrentBox.substring(2,3);
+    var qr=parseInt(QuadCoord.substring(1,2),10); //(r<3?0:(r<6?3:6));
+    var qc=parseInt(QuadCoord.substring(2,3),10); //(c<3?0:(c<6?3:6));
+    var CurOpts = document.getElementById('o'+r+c).value;
+    //var liOddsNum = 0;
+    //var ChkCell = "";
+	//var ChkOptions = "";
+    //var liAnswer = aSolved[r][c];
+	//var ChkAns = "";
+    //CurrentBox2="";
+	//var CurOptions = document.getElementById('o'+r+c).value;
+    for(rr=qr; rr<qr+3; rr++) { // Check Quadrent
+        for(cc=qc; cc<qc+3; cc++) {
+            ChkCell='n'+rr+cc;
+			if (ChkCell != CurrentBox && document.getElementById(ChkCell).value.includes(kNumber)) {
+                if (chkExist && document.getElementById(ChkCell).style.font == "") {
+                    if (!giShowNotes) {
+						ShowMessage(kNumber+" "+" in Quad...","Y");
+					} else {
+						ShowMessage("in Quad","Y");
+					}
+                    return true;
+                } else if (!chkExist) {
+                    if (document.getElementById(ChkCell).value.toString().length == 2) {
+                        document.getElementById(ChkCell).value = "";
+                        document.getElementById(ChkCell).style.backgroundColor = "rgb(255,255,255)";
+                        document.getElementById(ChkCell).style.foregroundColor = "rgb(0,0,0)";
+                        document.getElementById(ChkCell).style.font = "";
+                        aPaintStore[ChkCell.substring(1,2)][ChkCell.substring(2,3)] = "rgb(255,255,255)";
+                    } else {
+                        document.getElementById(ChkCell).value = document.getElementById(ChkCell).value.replace(kNumber,""); 
+                    }
+                }
+			}  //aText = aText.replace(s,""); document.getElementById('IdTimerCnt').value.toString().length
+        }
+    }
+    for(cc=0; cc<9; cc++) {
+        ChkCell='n'+r+cc;
+        if (ChkCell != CurrentBox && document.getElementById(ChkCell).value.includes(kNumber)) {
+            if (chkExist && document.getElementById(ChkCell).style.font == "") {
+                if (!giShowNotes) {
+					ShowMessage(kNumber+" "+" in Row...","Y");
+				} else {
+					ShowMessage("in Row","Y");
+				}
+                return true;
+            } else if (!chkExist) {
+                if (document.getElementById(ChkCell).value.toString().length == 2) {
+                    document.getElementById(ChkCell).value = "";
+                    document.getElementById(ChkCell).style.backgroundColor = "rgb(255,255,255)";
+                    document.getElementById(ChkCell).style.foregroundColor = "rgb(0,0,0)";
+                    document.getElementById(ChkCell).style.font = "";
+                    aPaintStore[ChkCell.substring(1,2)][ChkCell.substring(2,3)] = "rgb(255,255,255)";
+                } else {
+                    document.getElementById(ChkCell).value = document.getElementById(ChkCell).value.replace(kNumber,""); 
+                }
+            }
+        }  //aText = aText.replace(s,""); document.getElementById('IdTimerCnt').value.toString().length
+    }
+
+    for(rr=0; rr<9; rr++) { // Check Quadrent
+        ChkCell='n'+rr+c;
+        if (ChkCell != CurrentBox && document.getElementById(ChkCell).value.includes(kNumber)) {
+            if (chkExist && document.getElementById(ChkCell).style.font == "") {
+                if (!giShowNotes) {
+					ShowMessage(kNumber+" "+" in Column...","Y");
+				} else {
+					ShowMessage("in Col","Y");
+				}
+                return true;
+            } else if (!chkExist) {
+                if (document.getElementById(ChkCell).value.toString().length == 2) {
+                    document.getElementById(ChkCell).value = "";
+                    document.getElementById(ChkCell).style.backgroundColor = "rgb(255,255,255)";
+                    document.getElementById(ChkCell).style.foregroundColor = "rgb(0,0,0)";
+                    document.getElementById(ChkCell).style.font = "";
+                    aPaintStore[ChkCell.substring(1,2)][ChkCell.substring(2,3)] = "rgb(255,255,255)";
+                } else {
+                    document.getElementById(ChkCell).value = document.getElementById(ChkCell).value.replace(kNumber,""); 
+                }
+            }
+        }  //aText = aText.replace(s,""); document.getElementById('IdTimerCnt').value.toString().length
+    }
+}
+    
+/*function sleep(miliseconds) {
+    var currentTime = new Date().getTime();
+    while (currentTime + miliseconds >= new Date().getTime()) { }
+    for (var i = 1; i <= 5; i++) {
+        var tick = function(i) {
+            return function() {
+                console.log(i);
+            }
+        };
+        setTimeout(tick(i), 500 * i);
+    }
+}*/
+function ShowMessage(lcMessage,lcColor) {
+    if (giLevel < 4) {
+        document.getElementById('IdMessage').value = lcMessage;
+		if (lcColor == "B") {
+			document.getElementById('IdMessage').style.backgroundColor = "#ADD8E6";
+		} else {
+			document.getElementById('IdMessage').style.backgroundColor = "rgb(255,255,0)";
+		}
+        
+		document.getElementById('IdMessage').style.visibility = 'visible'; // hidden visible
+        //document.getElementById('IdMessage').style.display = 'inline-block'; //display:inline-block"> display:none
+        //document.addEventListener("mousemove", ClearMsg);
+    }
+}  
+
+function PaintNumbers(liAddScore) {
+    var lcBackColor = "";
+    var liColor = 0;
+    var n9Colors = 0;
+    var n = new Array(9);
+    for(rw=0; rw<9; rw++) { 
+        n[rw] = 0;
+    }
+    giTotCnt = 0;
+    for(rw=0; rw<9; rw++) {
+        for(cl=0; cl<9; cl++) {
+            if (document.getElementById('n'+rw+cl).value != "" && document.getElementById('n'+rw+cl).style.font == "") { //Store initial load
+                n[document.getElementById('n'+rw+cl).value-1]++;
+                giTotCnt++; 
+            }
+        }
+    }
+    document.getElementById('IdLoadCnt').value = giTotCnt;
+	if (gGameStarted) {
+    	document.getElementById('IdLoadCnt2').value = giTotCnt - giStartCnt;
+    	document.getElementById('IdMistake').value = giMistake;
+	}
+    for(rw=1; rw<=9; rw++) {
+        document.getElementById("KeyB"+rw).style.borderColor = "white";
+        lcBackColor = document.getElementById("KeyB"+rw).style.backgroundColor;
+        if (giLevel == 4) {
+            document.getElementById("KeyB"+rw).style.backgroundColor = "#4CAF50";
+        } else if (n[rw-1] == 9 && lcBackColor == "rgb(100, 0, 0)") { // && lcBackColor == "rgb(100, 0, 0)"
+            n9Colors++;
+         
+        } else if (n[rw-1] == 9 && lcBackColor != "rgb(100, 0, 0)") {
+            document.getElementById("KeyB"+rw).style.backgroundColor = "rgb(100, 0, 0)"; 
+            if (liAddScore) {
+                ShowMessage("Completed all number "+rw+"'s Adding Extra 5,000 points...","B");
+                AdjustAmount(5000);
+            }
+        } else if (n[rw-1] == 0) { //"rgb(0,0,100)";
+            document.getElementById("KeyB"+rw).style.backgroundColor = "rgb(0,200,200)";
+        //} else if (n[rw-1] == 1) { //"rgb(0,0,100)";
+        //    document.getElementById("KeyB"+rw).style.backgroundColor = "rgb(0,150,0)";
+        } else if (n[rw-1] > 0) { //"rgb(0,0,100)";
+            liColor = 45 + ((8-n[rw-1]) * 25);
+            //if (liAddScore) {
+            //    AdjustAmount(liColor);
+            //}
+            document.getElementById("KeyB"+rw).style.backgroundColor = "rgb(0,"+liColor+",0)";
+        } else {
+            document.getElementById("KeyB"+rw).style.backgroundColor = "#4CAF50";
+        }
+        if (n9Colors == 9) { // GameOver
+            giEndTime = new Date();
+            var liElapseTime = Math.round((giEndTime - giStartTime)/1000/60);
+            var TimePoints = 0;
+            //var liPauseElapseTime = 0;
+            liElapseTime = liElapseTime - giPauseTotTime;
+            if (giMistake < 5) {
+                TimePoints = (liElapseTime<5 ? 75000 : (liElapseTime<10 ? 100000 : (liElapseTime<20 ? 50000 : 0)));
+                TimePoints = TimePoints*((5-giMistake)/5);
+                if (liAddScore) {
+					if (giMistake == 0) {
+						TimePoints = TimePoints + 25000;
+						ShowMessage("Time Elapsed (No Errors!!): "+liElapseTime+" minutes...Adding Points: "+formatMoney(TimePoints),"B");
+					} else {
+						ShowMessage("Time Elapsed: "+liElapseTime+" minutes...Adding Points: "+formatMoney(TimePoints),"B");
+					}
+                    AdjustAmount(TimePoints);
+                } else if (giMistake == 0) {
+                    ShowMessage("No Errors: Adding Points: "+formatMoney(25000),"B");
+                    AdjustAmount(25000);
+				}
+            }
+            //alert("Time Elapsed: "+liElapseTime);
+            giTotLost = giTotLost + (giUndoCnt*1000); //(10000*giMistake)
+			var lcMessage="";
+            if (TimePoints>0) {
+				lcMessage = "Congratulations! Total accumulated: "+formatMoney(giAmount)+"\nTime Elapsed: "+liElapseTime+" minutes for extra: "+formatMoney(TimePoints)+"\nLoss Due to "+giMistake+" Mistakes: "+formatMoney(giTotLost)+"\nMulligans Used:"+(giMulliganAllowed-giMulligan)+"\n"+giBetCnt+" Bets Added: "+formatMoney(giTotBets)+"\nHighlighted Number: "+giBoldCount+" Cost:"+formatMoney(giBoldCount*500)+"\nCell Count: "+giCellCount+" Cost:"+formatMoney(giCellCount*500);
+                //alert("Congratulations! Game Over. You have accumulated: "+formatMoney(giAmount)+"\nTime Elapsed: "+liElapseTime+" minutes for extra: "+formatMoney(TimePoints)+"\nLost Due to "+giMistake+" Mistakes: "+formatMoney(TotLost));
+            } else {
+                lcMessage = "Congratulations! Total accumulated: "+formatMoney(giAmount)+"\nTime Elapsed: "+liElapseTime+" minutes..."+"\nLoss Due to "+giMistake+" Mistakes: "+formatMoney(giTotLost)+"\nMulligans Used:"+(giMulliganAllowed-giMulligan)+"\n"+giBetCnt+" Bets Added: "+formatMoney(giTotBets)+"\nHighlighted Number: "+giBoldCount+" Cost:"+formatMoney(giBoldCount*500)+"\nCell Count: "+giCellCount+" Cost:"+formatMoney(giCellCount*500);
+				//alert("Congratulations! Game Over. You have accumulated: "+formatMoney(giAmount)+"\nTime Elapsed: "+liElapseTime+" minutes..."+"\nLost Due to Mistakes: "+formatMoney(TotLost));
+            }
+			if (gi10IN5) {
+				lcMessage=lcMessage+"\n10 in 5mins for extra 100,000...";
+			}
+			document.getElementById('IdFinalMessage').value = lcMessage;
+			document.getElementById('IdFinalMessage').style.foregroundColor = "rgb(20,90,20)";
+			document.getElementById('IdFinalMessage').style.backgroundColor = "rgb(200,200,200)";
+			document.getElementById('IdFinalMessage').style.display = 'inline-block';
+document.getElementById("IdLoadCnt").style.backgroundColor = "white";
+			document.getElementById('IdLoadCnt2').value = 0;
+            gGameStarted = false;
+			SetupBlur(0);
+            return true;
+        } 
+    }
+}
+function Pause(liToggle) {
+    if (!gGameStarted) {
+        return;
+    }
+	ClearMsg();
+    for(r=0; r<9; r++) { //  
+        for(c=0; c<9; c++) {
+            if (document.getElementById('MyPause').innerText == "Pause Timer" || liToggle=="Off") {
+                //document.getElementById('n'+r+c).style.foregroundColor = document.getElementById('n'+r+c).style.backgroundColor;
+				//document.getElementById('n'+r+c).className = "pause";
+                document.getElementById('n'+r+c).style.color = "#ADD8E6"; //"rgb(120,120,120)";
+				document.getElementById('n'+r+c).style.backgroundColor = "#ADD8E6"; //"rgb(120,120,120)";
+            } else {
+				document.getElementById('n'+r+c).className = "";
+				document.getElementById('n'+r+c).style.color = "rgb(0,0,0)";
+                document.getElementById('n'+r+c).style.backgroundColor = aPaintStore[r][c];
+            }
+        }
+    }
+    if (document.getElementById('MyPause').innerText == "Pause Timer" || liToggle=="Off") {
+        giPauseStartTime = new Date();
+        document.getElementById('MyPause').innerText = "Continue";
+        document.getElementById("NavButtons").style.display = "none";    
+    } else {
+        liPauseEndTime = new Date();
+        giPauseTotTime = giPauseTotTime + Math.round((liPauseEndTime - giPauseStartTime)/1000/60);
+        giPauseStartTime == "";
+        document.getElementById('MyPause').innerText = "Pause Timer";
+        document.getElementById("NavButtons").style.display = "block";
+        
+        document.getElementById('IdTimerCnt').value = Math.round((liPauseEndTime - giStartTime)/1000/60) - giPauseTotTime;
+        document.getElementById('IdTimerCnt').style.width = ((document.getElementById('IdTimerCnt').value.toString().length + 1)*8) + 'px';
+        document.getElementById('IdPauseCnt').value = giPauseTotTime;
+        document.getElementById('IdPauseCnt').style.width = ((giPauseTotTime.toString().length + 1)*8) + 'px';
+    }
+}    
+function Pin(BoxID) {
+    if (document.getElementById('MyPause').innerText == "Continue") {
+        return;
+    }
+	ClearMsg();
+	if (giMouseWasDn) {
+		giMouseWasDn = false;
+		BoldNum(0);
+	}
+	if (giStartTime != "") {
+        var liCurrTime = new Date();
+        document.getElementById('IdTimerCnt').value = Math.round((liCurrTime - giStartTime)/1000/60) - giPauseTotTime;
+        document.getElementById('IdTimerCnt').style.width = ((document.getElementById('IdTimerCnt').value.toString().length + 1)*8) + 'px';
+    }
+
+    if (giShowNotes && document.getElementById(BoxID).value != "" && document.getElementById(BoxID).style.font == "") {
+        if (CurrentBox != "") { // && document.getElementById(CurrentBox).style.borderColor == "red"
+            document.getElementById(CurrentBox).style.borderColor = "rgb(255,255,255)";
+            CurrentBox = "";
+        }
+        return;
+    }
+	ClearBorder();
+
+    CurrentBox=BoxID;
+
+
+    if (giShowNotes) {
+        document.getElementById(CurrentBox).style.borderColor = "green";
+		if (giShowNotes && document.getElementById('KeyNoteLast').innerText!='#') {
+		    KeyB(giShowNotesNum);
+		}
+    } else if (BoxID.substring(0,1) == 'o') {
+        document.getElementById(CurrentBox).style.borderColor = "green";
+        document.getElementById('n'+CurrentBox.substring(1,3)).style.borderColor = "red";
+    } else if (canBet()) {
+		document.getElementById(CurrentBox).style.borderColor = "red";  
+	} else {
+        document.getElementById(CurrentBox).style.borderColor = "rgb(0,200,225)"; //"black";"rgb(0,200,225)"; //
+    } 
+	if (document.getElementById("MyCellNums").className == "buttonOn") {
+		CellNums();
+	}
+	if (giShowAvOptions) {
+		ShowAvailable(true);
+	}
+}
+function ClearBorder() {
+	
+    if (CurrentBox != "") { // && document.getElementById(CurrentBox).style.borderColor == "red"
+        document.getElementById(CurrentBox).style.borderColor = "rgb(255,255,255)"; //rgb(255,255,0)
+        if (CurrentBox2 != "") { 
+            for (x=0;x<CurrentBox2.length;x=x+3) {
+                document.getElementById(CurrentBox2.substring(x,x+3)).style.borderColor = "rgb(255,255,255)";
+            }
+            CurrentBox2 = "";
+        }
+        if (CurrentBox.substring(0,1) == 'o') {
+            document.getElementById('n'+CurrentBox.substring(1,3)).style.borderColor = "rgb(255,255,255)";
+        }
+        if (document.getElementById(CurrentBox).style.font == "") {//document.getElementById(CurrentBox).value.substring(0,1) != "*") {
+            document.getElementById(CurrentBox).style.backgroundColor = aPaintStore[CurrentBox.substring(1,2)][CurrentBox.substring(2,3)]; //"rgb(255,255,255)";
+            document.getElementById(CurrentBox).style.foregroundColor = "rgb(255,0,0)";
+        }
+        for(k=1; k<=9; k++) { //  
+            document.getElementById("KeyB"+k).style.borderColor = "white";
+        }
+        if (giHintOn) {
+            Hint();
+            document.getElementById("myHint").removeEventListener("click", ClearPaint); 
+            ClearPaint();
+        }
+    }
+}
+function PinOff(BoxID) {
+    if (document.getElementById(BoxID).value != "" && giLevel > 1) {
+        var BoxValue = document.getElementById(BoxID).value;
+        document.getElementById(BoxID).value = BoxValue.slice(0,BoxValue.length-1);
+        //aNotes[CurrentBox.substring(1,2)][CurrentBox.substring(2,3)] = document.getElementById(CurrentBox).value + kNumber;
+    }
+}
+function ToggleAssist() {
+	giShowAvOptions=!giShowAvOptions;
+	if (giShowAvOptions) {
+		document.getElementById('MyAssist').innerText = "Assist Off";
+	} else {
+		document.getElementById('MyAssist').innerText = "Assist";
+	}
+	ShowAvailable(false);
+}
+function ToggleNotes() {
+    if (giHintOn) {
+        return;
+    }
+    if (giShowNotes) {
+	//debugger;
+        document.getElementById('MyNotes').innerText = "Add Notes";
+        document.getElementById('MyNotes').style.borderColor = "";
+        document.getElementById('KeyB0').style.display = 'none';
+		document.getElementById('KeyNoteLast').style.display = 'none';
+        if (CurrentBox != "") { // && document.getElementById(CurrentBox).style.font == ""
+            document.getElementById(CurrentBox).style.borderColor = "red";
+        }
+        giShowNotes = false;
+		giShowNotesNum = 0;
+		document.getElementById('KeyNoteLast').innerText = '#';
+    } else {
+		document.getElementById("MyBold").className = "button";
+		document.getElementById("MyCellNums").className = "button";
+		ClearMsg();
+		document.getElementById('MyNotes').innerText = "Notes Off"; 
+        document.getElementById('MyNotes').style.borderColor = "red";
+        giShowNotes = true;
+        document.getElementById('KeyB0').style.display = 'inline-block';
+		document.getElementById('KeyNoteLast').style.display = 'inline-block';
+        if (CurrentBox=="") {
+        } else if (CurrentBox != "") { // document.getElementById(CurrentBox).style.font == "" && document.getElementById(CurrentBox).value == ""
+            document.getElementById(CurrentBox).style.borderColor = "green";
+        } else {
+            document.getElementById(CurrentBox).style.borderColor = "rgb(255,255,255)";
+        }
+        
+    }
+	return;
+}
+function showRanNum() {
+	document.getElementById('IdLoadCnt2').value = giTotCnt - giStartCnt;
+	ShowMessage("Random Number..."+RanNum);
+	//alert(RanNum);
+	return false;
+}
+function help() {
+    var HowToPlay = "Thanks for Playing Learn Sudoku. ";
+	HowToPlay=HowToPlay + "\n\nLoad game...Touch the Cell you want to change then Touch one of the Green Numbers. "+
+	"\n\nThe objective is to fill a 9x9 grid so that each column, each row, and each of the nine 3x3 boxes (also called blocks or regions) contains the digits from 1 to 9. A cell is the smallest block in the game. A row , column and region consists of 9 cells and the whole game consists of 81 cells. \nTo Enter your own game, hit Reset then enter starting cells, when ready to start, hit load.\n\nTo Bet, Click on Empty and if border is Red, Click Bet and your Odds will show based on Options available within same Quad.";
+    HowToPlay=HowToPlay + "\n\nThe more a Number is used, the number key will darken. A Number used 9 times turns RED and adds 5,000 points. ";
+    HowToPlay=HowToPlay + "\n\n If playing on phone, you may need to resize screen to get 9 rows and 9 columns. To Resize screen - click -+ buttons top row. ";
+	alert(HowToPlay);
+	return;
+}     //\nApprentice - Only 15 Hints per Games/Buy for extra. \nMaster - Must Buy Hints. No-Options. \nExpert - No Helpful Tools. 
+function help2() {
+    var HowToPlay = "Help Buttons as follows:";
+	HowToPlay=HowToPlay + "\n\n Hints - randomly selects an empty cell. Shows Logic to solve one cell. or DBL-Click on Empty Cell for help.";
+	HowToPlay=HowToPlay + "\n\n DBL-Click on any Empty Cell for help with Logic to solve.";
+	HowToPlay=HowToPlay + "\n\n Assist - for empty cells, highlights possible numbers in Numbers Row.";
+	HowToPlay=HowToPlay + "\n\n Nudge - randomly solves 1 cell. Reduces Score by 1000...";
+	HowToPlay=HowToPlay + "\n\n Add Notes - click on to add possible numbers in Cell colored yellow. If # has been used, entry will be ignored.";
+	HowToPlay=HowToPlay + "\n\n Notes Off - turns off Notes allows cell updates.";
+	HowToPlay=HowToPlay + "\n\n Options - toggles all cell options.";
+	HowToPlay=HowToPlay + "\n\n H - To have better insight on a number, Click the H-Button then click on any number in the Number Row to 'Highlight' same numbers on board. Reduces Score by 500...";
+	HowToPlay=HowToPlay + "\n\n'C' - click on any empty Cell then C-button. A note showing option numbers available. Reduces Score by 500...";
+	//HowToPlay=HowToPlay + "\n "; //Hints show how to solve one cell or DBL-Click on Cell for options. \nNudge will solve one cell at a time. 
+    
+	alert(HowToPlay);
+	return;
+}   
+function zoom(ZoomUp) {
+	if (ZoomUp) {
+		giZoom = giZoom + 5;
+	} else {
+		giZoom = giZoom - 5;
+	}
+	document.body.style.zoom = giZoom+"%";
+	ShowMessage("Zoom "+giZoom+"%","Y");
+	return;
+	/*if (ZoomUp) {
+		document.getElementById('idZoomUp').focus();
+	} else {
+		document.getElementById('idZoomDn').focus();
+	}//alert("Zoom is: "+giZoom+"%");
+	*/
+}
+/*$('#input').focus(function() {
+  this.blur();&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+}); //https://stackoverflow.com/questions/8335834/how-can-i-hide-the-android-keyboard-using-javascript
+width: 100px; 
+        document.getElementById("idHint").value = 0;
+    document.getElementById("idAmount").value = "0";
+&nbsp&nbsp&nbsp&nbsp&nbsp
+&nbsp&nbsp&nbsp&nbsp&nbsp
+*/
+
+
+</script>
+
+<BODY bgcolor="#c3d8f4" text="Navy">
+<div id="TopSection"  class='t'>
+
+<b><font size="+2">Learn Sudoku</font></b>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+<div id="HintScoreBlock" style="display:inline-block"> 
+
+Score: <input type="text" size=8 id="IdAmount" style="width: 60px;visibility:visible;text-align:right;" readonly="readonly"> 
+    <input type="text" id="idZoomDn" class="Label2" value="-" readonly="readonly" onclick="zoom(false);" style="width: 10px;">
+	<input type="text" id="idZoomUp" class="Label2" value="+" readonly="readonly" onclick="zoom(true);" style="width: 10px;">
+    <input type="text" id="mVersion" class="Labelb" value='v2.15' readonly="readonly" style="width: 30px;">
+</div></div>
+    
+<BR>
+<!--Enjoy Your Game:<BR><BR>-->
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n00" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n01" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n02" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n03" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n04" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n05" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n06" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n07" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n08" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n10" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n11" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n12" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n13" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n14" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n15" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n16" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n17" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n18" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n20" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n21" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n22" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n23" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n24" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n25" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n26" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n27" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n28" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+<button class="butNote" type="button" id="NoteSec1" onClick="NoteToggle(1)"></button>
+<font size="2" style="width: 375px; visibility:hidden" id="IdNote1">Options...</font><BR>
+<div id="Section1" style="display:none">
+<div id="InsideSection1" class='a'>    
+<input type="text" onfocus="Pin(id)" size=1 id="o00" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o01" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o02" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o03" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o04" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o05" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o06" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o07" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o08" style="width: 33px;"> <BR>
+    
+<input type="text" onfocus="Pin(id)" size=1 id="o10" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o11" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o12" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o13" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o14" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o15" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o16" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o17" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o18" style="width: 33px;"> <BR>
+    
+<input type="text" onfocus="Pin(id)" size=1 id="o20" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o21" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o22" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o23" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o24" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o25" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o26" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o27" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o28" style="width: 33px;"> 
+</div>
+<BR>  
+</div>
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n30" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n31" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n32" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n33" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n34" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n35" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n36" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n37" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n38" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n40" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n41" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n42" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n43" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n44" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n45" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n46" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n47" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n48" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+    
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n50" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n51" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n52" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n53" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n54" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n55" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n56" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n57" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n58" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+<button class="butNote" type="button" id="NoteSec2" onClick="NoteToggle(2)"></button>
+<font size="2" style="width: 375px; visibility:hidden" id="IdNote2">Options...</font><BR>
+<div id="Section2" style="display:none"><div id="InsideSection2"  class='a'>
+<input type="text" onfocus="Pin(id)" size=1 id="o30" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o31" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o32" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o33" style="width: 33px;">  
+<input type="text" onfocus="Pin(id)" size=1 id="o34" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o35" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o36" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o37" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o38" style="width: 33px;"> <BR>
+    
+<input type="text" onfocus="Pin(id)" size=1 id="o40" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o41" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o42" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o43" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o44" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o45" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o46" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o47" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o48" style="width: 33px;"> <BR>
+
+<input type="text" onfocus="Pin(id)" size=1 id="o50" style="width: 33px;">
+<input type="text" onfocus="Pin(id)" size=1 id="o51" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o52" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o53" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o54" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o55" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o56" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o57" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o58" style="width: 33px;"> 
+</div>
+<BR>  
+</div>
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n60" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n61" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n62" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n63" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n64" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n65" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n66" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n67" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n68" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+    
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n70" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n71" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n72" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n73" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n74" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n75" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n76" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n77" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n78" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+    
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n80" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n81" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n82" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n83" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n84" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"> 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n85" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">&nbsp&nbsp 
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n86" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n87" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly">
+<input type="text" onfocus="Pin(id)" onkeypress="return isNumberKey(event);" size=1 style="width: 33px;" id="n88" maxlength="1" onchange="isChange()" ondblclick="FindValues(id,true,false,[],false)" readonly="readonly"><BR>
+<button class="butNote" type="button" id="NoteSec3" onClick="NoteToggle(3)"></button>
+    <font size="2" style="width: 375px; visibility:hidden" id="IdNote3">Options...</font><BR>
+<div id="Section3" style="display:none"><div id="InsideSection3" class='a'>
+<input type="text" onfocus="Pin(id)" size=1 id="o60" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o61" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o62" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o63" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o64" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o65" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o66" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o67" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o68" style="width: 33px;"> <BR>
+
+<input type="text" onfocus="Pin(id)" size=1 id="o70" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o71" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o72" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o73" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o74" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o75" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o76" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o77" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o78" style="width: 33px;"> <BR>
+
+<input type="text" onfocus="Pin(id)" size=1 id="o80" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o81" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o82" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o83" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o84" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o85" style="width: 33px;"> &nbsp
+<input type="text" onfocus="Pin(id)" size=1 id="o86" style="width: 33px;"> 
+<input type="text" onfocus="Pin(id)" size=1 id="o87" style="width: 33px;"> 
+<input type="text" ontimeupdate="" onfocus="Pin(id)" size=1 id="o88" style="width: 33px;"> 
+ </div>
+<BR>  
+</div>
+</div>
+<button class="numbers" type="button" id="KeyB1" onClick="KeyB(1)">1</button>
+<button class="numbers" type="button" id="KeyB2" onClick="KeyB(2)">2</button>
+<button class="numbers" type="button" id="KeyB3" onClick="KeyB(3)">3</button>
+<button class="numbers" type="button" id="KeyB4" onClick="KeyB(4)">4</button>
+<button class="numbers" type="button" id="KeyB5" onClick="KeyB(5)">5</button>
+<button class="numbers" type="button" id="KeyB6" onClick="KeyB(6)">6</button>
+<button class="numbers" type="button" id="KeyB7" onClick="KeyB(7)">7</button>
+<button class="numbers" type="button" id="KeyB8" onClick="KeyB(8)">8</button>
+<button class="numbers" type="button" id="KeyB9" onClick="KeyB(9)">9</button>
+<!-- ondblclick="BoldNum(1,true)" -->
+    
+<div id="NavButtons" style="display:block"><BR>
+<button type="button" id="myHint" onClick="Hint()">Hint</button>
+<button type="button" id="myHintBuy" onClick="buyHints(1)" style="display:inline-block";>Buy</button>
+<input type="text" size=8 id="IdHint" style="width: 18px;visibility:visible;text-align:right;" readonly="readonly">
+<button type="button" id="mySolve" onClick="SolveGame()">Nudge$</button>
+
+
+
+
+
+
+
+<select ID="myBet" style="display:none">
+  <option value="0">10,000</option>
+  <option value="1">15,000</option>
+  <option value="2">20,000</option>
+  <option value="3">25,000</option>
+</select>
+<button class="buttonbet" type="button" onClick="onBet()">Bet</button>
+<button class="button" type="button" id="MyBold" onClick="BoldOn()">H</button>
+<button class="button" type="button" id="MyCellNums" onClick="CellNumsOn()">C</button>
+<button type="button" id="MyNotes" onClick="ToggleNotes()">Add Notes</button>
+<button class="buttonbet" type="button" id="KeyB0" onClick="KeyB(0)" style="display: none">*</button>
+<button class="buttonbet" type="button" id="KeyNoteLast" onClick="KeyNoteLast(giShowNotesNum)" style="display: none">#</button>
+
+</div>
+
+
+
+        
+
+<br>
+
+<div class="dropdown"><!-- 
+<select ID="myDifficulty" onchange="ChangeLevel()">
+  <option value="0">Apprentice</option>
+  <option value="2">Advanced</option>
+  <option value="3">Master</option>
+</select>
+<option value="1">Intermediate</option> -->
+  
+
+<button type="button" onClick="resetform(1)">Reset</button>&nbsp<button type="button" id="myUndo" onClick="UndoRestore(false)">Undo</button>
+	
+<button class="buttonbet" type="button" onClick="loadGame(true)">Load</button><input type="text" size=8 id="IdLoadCnt" style="width: 18px;display:inline-block;text-align:right;" readonly="readonly"><input type="text" size=8 id="IdLoadCnt2" ondblclick="showRanNum()" style="width: 18px;display:inline-block;text-align:right;" readonly="readonly">  <!--readonly="readonly" -->
+
+<button type="button" id="MyAssist" onClick="ToggleAssist()">Assist</button> 
+<br>
+
+
+<input class="show" type="text" size=8 id="IdMessage" style="width: 382px; visibility: hidden" readonly="readonly"> 
+</div>
+<br>
+<button type="button" id="MyPause" onClick="Pause('')">Pause Timer</button><input type="text" id="IdTimerCnt" style="width: 18px;text-align:right;" readonly="readonly"><input type="text" id="IdPauseCnt" style="width: 18px;text-align:right;display:none;" readonly="readonly">
+
+
+<button type="button" id="myError" onClick="CheckError(false)">Errors</button><input type="text" size=8 id="IdMistake" style="width: 18px;visibility:visible;text-align:right;" readonly="readonly">
+	<button type="button" onClick="help()">Help</button>
+	<button type="button" onClick="help2()">Help Buttons</button>
+	<button type="button" id="MyNotesAll" onClick="CellNumsAll()">Options</button>
+<br>
+<textarea rows="8" cols="45" id="IdFinalMessage" style="display:none" readonly="readonly"> 
+	
+</BODY>
+</HTML>
+    
+<!-- <button type="button" id="myOptions" onClick="FindOptions(false,true,false)">Option</button> 
+     <button type="button" id="myNotes" onClick="ShowNotes(false)">Note</button>
+<button class="button" type="button" id="KeyB0" onClick="KeyB(0)">&nbsp</button>
+selected="selected"
+&nbsp<font size="2">Difficulty: </font>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<font size="2">Tools:</font><br>
+<P>
+-->
+<!--   <select ID="myDifficulty" onchange="loadGame(true)">
+      <option value="0">Simple 1</option>
+      <option value="1">Simple 3</option>
+      <option value="2">Medium 86</option>
+      <option value="3">Medium 112</option>
+      <option value="4">Hard 1</option>
+      <option value="5">Hard 2</option>
+      <option value="6">Hard 88</option>
+      <option value="7">Websudoku</option>
+      <option value="8">Websudoku</option>
+      <option value="9">Hard 99</option>
+      <option value="10">Evil</option>
+      <option value="11">Diabolical 134</option>
+      <option value="12">Diabolical 187</option>
+      <option value="13">Diabolical 198</option>  
+
+      <option value="4">Evil</option>
+    </select>-->
+	<!-- 
+    <select ID="myLevel" onchange="ChangeLevel()">
+      <option value="0">Novice</option>
+      <option value="1">Apprentice</option>
+      <option value="2">Master</option>
+      <option value="3">Expert</option>
+    </select>
+Solve Fast:<input type="checkbox" id="kSolveOne"  onclick="FastSolve()"> 
+<font size="2">Hint: Dbl Click or press Hint for Cell Options. </font><br>
+<font size="2">      Click '+' for Multiple Options (Level 1 Only).</font>
+<div id='output' style="visibility:hidden">
+    <input type='file' accept='text/plain' onchange='openFile(event)'>     display:none
+</div>-->
